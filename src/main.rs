@@ -1,9 +1,11 @@
+extern crate regex;
 
 use std::fs::File;
 use std::io::prelude::*;
 use std::time::Instant;
 
 mod day_01;
+mod day_02;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -14,12 +16,12 @@ fn read(path: &str) -> String {
     contents
 }
 
+
 fn day_01_run() {
     let path = "data/day_01.txt";
     let data = read(path);
 
     let (part_a, part_b) = day_01::counter_of_text(&data);
-
 
     assert_eq!(part_a, 533);
     assert_eq!(part_b, 73272);
@@ -28,6 +30,19 @@ fn day_01_run() {
 
 }
 
+
+fn day_02_run() {
+    let path = "data/day_02.txt";
+    let data = read(path);
+    let part_a = day_02::do_it(&data);
+    let part_b = day_02::do_it2(&data);
+
+    assert_eq!(part_a, 4980);
+    assert_eq!(part_b, "qysdtrkloagnfozuwujmhrbvx".to_string());
+
+    println!("Day 02: Part A: {}; Part B: {}", part_a, part_b);
+
+}
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
     let start = Instant::now();
@@ -44,5 +59,5 @@ pub fn time_it(func: fn() -> ()) {
 
 fn main() {
     day_01_run();
-    println!("Hello, world!");
+    day_02_run();
 }
