@@ -3,7 +3,7 @@ use std::collections::HashMap;
 /// Count the repetition of strings that have exactly:
 ///     -> 2 of the same character and/or
 ///     -> 3 of the same character.
-pub fn do_it(input: &str) -> i64 {
+pub fn count_character_repetition(input: &str) -> i64 {
     let mut count_of_2 = 0;
     let mut count_of_3 = 0;
 
@@ -35,7 +35,7 @@ pub fn do_it(input: &str) -> i64 {
 
 /// Dif every string against all other strings to see which one has the least amount of difference
 /// --> return the result without the character(s) that are different.
-pub fn do_it2(input: &str) -> String {
+pub fn diff_lines_of_input(input: &str) -> String {
     let mut result = "".to_string();
     let mut total = 0;
     let lines: Vec<&str> = input.lines().collect();

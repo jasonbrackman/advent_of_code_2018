@@ -34,8 +34,8 @@ fn day_01_run() {
 fn day_02_run() {
     let path = "data/day_02.txt";
     let data = read(path);
-    let part_a = day_02::do_it(&data);
-    let part_b = day_02::do_it2(&data);
+    let part_a = day_02::count_character_repetition(&data);
+    let part_b = day_02::diff_lines_of_input(&data);
 
     assert_eq!(part_a, 4980);
     assert_eq!(part_b, "qysdtrkloagnfozuwujmhrbvx".to_string());
