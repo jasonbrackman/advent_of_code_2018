@@ -14,20 +14,8 @@ pub fn count_character_repetition(input: &str) -> i64 {
             *x += 1;
         }
 
-
-        let mut filled2 = false;
-        let mut filled3 = false;
-        for (_k, v) in hmap.into_iter() {
-            //println!("{}-{}", k, v);
-            if v == 2 && !filled2 {
-                count_of_2 += 1;
-                filled2 = true;
-            }
-            if v == 3 && !filled3 {
-                count_of_3 += 1;
-                filled3 = true;
-            }
-        }
+        if hmap.iter().any(|(_, &v)| v == 2) { count_of_2 += 1};
+        if hmap.iter().any(|(_, &v)| v == 3) { count_of_3 += 1};
     }
 
     count_of_2 * count_of_3
@@ -69,6 +57,7 @@ pub fn how_similar(input1: &str, input2: &str) -> (i64, Vec<char>) {
             bad.push(a);
         }
     }
+
     (score, bad)
 }
 
