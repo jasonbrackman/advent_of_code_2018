@@ -7,6 +7,7 @@ use std::time::Instant;
 mod day_01;
 mod day_02;
 mod day_03;
+mod day_04;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -57,6 +58,23 @@ fn day_03_run() {
 
 }
 
+fn day_04_run() {
+    let path = "data/day_04.txt";
+    let data = read(path);
+
+    let items = day_04::get_sorted_items(&data);
+    let mut hmap = day_04::create_timesheet(items);
+
+
+    let part_a = day_04::part_a(&mut hmap);
+    let part_b = day_04::part_b(&mut hmap);
+    assert_eq!(part_a, 140_932);
+    assert_eq!(part_b, 51_232);
+
+    println!("Day 04: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
     let start = Instant::now();
@@ -76,4 +94,5 @@ fn main() {
     time_it(day_01_run);
     time_it(day_02_run);
     time_it(day_03_run);
+    time_it(day_04_run);
 }
