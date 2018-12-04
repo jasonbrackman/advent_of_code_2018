@@ -1,3 +1,4 @@
+use regex::Regex;
 
 struct Rule {
     id: usize,
@@ -6,6 +7,7 @@ struct Rule {
     width: usize,
     height: usize
 }
+
 fn parse_line_to_components(input: &str) -> Rule {
     let items: Vec<&str> = input.split_whitespace().map(|s| s.trim_right_matches('.')).collect();
     let direction: Vec<&str> = items[2].split(',').collect();
@@ -34,10 +36,8 @@ pub fn doit(input: &str) -> (i32, usize){
                 cells[i][j] += 1;
             }
         }
-
-
-
     }
+
     let mut total = 0;
 
     for i in 0..cells.len() {
@@ -62,9 +62,7 @@ pub fn doit(input: &str) -> (i32, usize){
                 if cells[i][j] > 1 {
                     is_good = false;
                 }
-
             }
-
         }
 
         if is_good {
@@ -75,3 +73,24 @@ pub fn doit(input: &str) -> (i32, usize){
 
     (total, part_b)
 }
+
+#[test]
+fn test_regex() {
+    let input = "#1 @ 151,671: 11x15";
+    let mut items = Vec::new();
+    let re = Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
+    for cap in re.captures_iter(input) {
+        items = vec!(
+            cap[1].parse::<i32>().unwrap(),
+            cap[2].parse::<i32>().unwrap(),
+            cap[3].parse::<i32>().unwrap(),
+            cap[4].parse::<i32>().unwrap(),
+            cap[5].parse::<i32>().unwrap()
+        );
+    }
+
+    for item in items.iter() {
+        println!("{:?}", item);
+    }
+}
+
