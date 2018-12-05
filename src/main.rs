@@ -8,6 +8,7 @@ mod day_01;
 mod day_02;
 mod day_03;
 mod day_04;
+mod day_05;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -75,6 +76,20 @@ fn day_04_run() {
 
 }
 
+fn day_05_run() {
+    let path = "data/day_05.txt";
+    let data = read(path);
+    // day_05::doit(&data);
+    let (part_a, part_b) = day_05::reduce(&data);
+
+    assert_eq!(part_a, 11668);
+    assert_eq!(part_b, 4652);
+
+    println!("Day 05: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
+
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
     let start = Instant::now();
@@ -90,9 +105,10 @@ pub fn time_it(func: fn() -> ()) {
 }
 
 fn main() {
-
     time_it(day_01_run);
     time_it(day_02_run);
     time_it(day_03_run);
     time_it(day_04_run);
+    time_it(day_05_run);
 }
+
