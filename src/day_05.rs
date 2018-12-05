@@ -10,8 +10,8 @@ pub fn reduce(input: &str) -> (i32, i32) {
 
     for (c1, c2) in pairs {
 
-        let mut s = String::from(c1.to_string());
-        s.push(c2);
+        let mut s = format!("{}{}", c1, c2);//String::from(c1.to_string());
+        // s.push(c2);
 
         let new = strip_characters(input, &s);
         if !seen.contains(&new) {
@@ -32,7 +32,6 @@ fn strip_characters(original : &str, to_strip : &str) -> String {
     original.chars().filter(|&c| !to_strip.contains(c)).collect()
 }
 
-
 fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
     let mut temp_c = ' ';
 
@@ -52,13 +51,11 @@ fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
             new.push(c);
             if !skip {
                 if c != temp_c {
-                    let needle = c.to_lowercase();
-                    let haystack = temp_c.to_lowercase();
-                    if needle.to_string() == haystack.to_string() {
+                    let needle = c.to_lowercase().next().unwrap();
+                    let haystack = temp_c.to_lowercase().next().unwrap();
+                    if needle == haystack {
                         remove += 2;
-
                         pairs.insert((new.pop().unwrap(), new.pop().unwrap()));
-
                         skip = true;
 
                     }
@@ -79,15 +76,11 @@ fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
 }
 
 #[test]
-fn test_doit() {
-    let input = "asdf\nfdsa";
-    assert_eq!(doit(input), 0)
+fn test_dedup() {
+    let input = "dabCBAcaDA";
+    let mut data = input.to_owned();
+
+
+    println!("{}", data.len());
+
 }
-
-
-#[test]
-fn test_doit2() {
-    let input = "qGA";
-    doit(input);
-}
-

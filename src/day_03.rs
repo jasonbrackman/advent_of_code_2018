@@ -13,14 +13,13 @@ fn parse_line_to_components(input: &str) -> Rule {
     let direction: Vec<&str> = items[2].split(',').collect();
     let width_height: Vec<&str> = items[3].split('x').collect();
 
-    let x = Rule{
+    Rule{
         id: String::from(items[0]).trim_start_matches('#').parse::<usize>().unwrap(),
         from_left: direction[0].parse::<usize>().unwrap(),
         from_top: direction[1].trim_end_matches(':').parse::<usize>().unwrap(),
         width: width_height[0].parse::<usize>().unwrap(),
         height: width_height[1].parse::<usize>().unwrap(),
-    };
-    x
+    }
 }
 
 pub fn doit(input: &str) -> (i32, usize){

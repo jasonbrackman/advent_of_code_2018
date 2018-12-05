@@ -9,7 +9,7 @@ pub fn part_a(hmap: &mut HashMap<String, Vec<i32>>) -> i32{
     let mut most_sleep = 0;
     let mut guard = "";
     for (k, v) in hmap.iter() {
-        let sleep = v.iter().fold(0, |acc, val| acc + val);
+        let sleep = v.iter().sum(); //.fold(0, |acc, val| acc + val);
         most_sleep = if sleep > most_sleep {
             guard = k;
             sleep
@@ -102,9 +102,9 @@ pub fn part_b(hmap: &mut HashMap<String, Vec<i32>>) -> i32 {
     let mut guardb = "";
     let mut countb = 0;
     for (k, v) in hmap.iter_mut() {
-        for (index, num) in v.iter().enumerate() {
-            if num > &countb {
-                countb = *num;
+        for (index, &num) in v.iter().enumerate() {
+            if num > countb {
+                countb = num;
                 minuteb = index;
                 guardb = k;
             }
