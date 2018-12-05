@@ -1,4 +1,4 @@
-use regex::Regex;
+// use regex::Regex;
 
 struct Rule {
     id: usize,
@@ -74,23 +74,23 @@ pub fn doit(input: &str) -> (i32, usize){
     (total, part_b)
 }
 
-#[test]
-fn test_regex() {
-    let input = "#1 @ 151,671: 11x15";
-    let mut items = Vec::new();
-    let re = Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
-    for cap in re.captures_iter(input) {
-        items = vec!(
-            cap[1].parse::<i32>().unwrap(),
-            cap[2].parse::<i32>().unwrap(),
-            cap[3].parse::<i32>().unwrap(),
-            cap[4].parse::<i32>().unwrap(),
-            cap[5].parse::<i32>().unwrap()
-        );
-    }
-
-    for item in items.iter() {
-        println!("{:?}", item);
-    }
-}
+//#[test]
+//fn test_regex() {
+//    let input = "#1 @ 151,671: 11x15";
+//    let mut items = Vec::new();
+//    let re = Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
+//    for cap in re.captures_iter(input) {
+//        items = vec!(
+//            cap[1].parse::<i32>().unwrap(),
+//            cap[2].parse::<i32>().unwrap(),
+//            cap[3].parse::<i32>().unwrap(),
+//            cap[4].parse::<i32>().unwrap(),
+//            cap[5].parse::<i32>().unwrap()
+//        );
+//    }
+//
+//    for item in items.iter() {
+//        println!("{:?}", item);
+//    }
+//}
 

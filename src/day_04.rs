@@ -38,6 +38,7 @@ pub fn part_a(hmap: &mut HashMap<String, Vec<i32>>) -> i32{
        guard_id = cap[1].parse::<i32>().unwrap();
 
     }
+
     assert_eq!(the_minute, 44);
 
     guard_id * the_minute as i32
@@ -140,11 +141,5 @@ pub fn get_sorted_items(input: &str) -> Vec<Vec<String>> {
     items.sort();
 
     items
-}
-
-
-#[test]
-fn test_doit() {
-    assert_eq!(doit("asdf1\nasdf2"), 0)
 }
 
