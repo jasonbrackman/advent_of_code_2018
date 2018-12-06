@@ -1,5 +1,5 @@
 
-use std::collections::{HashSet};
+use std::collections::{HashMap, HashSet};
 
 // for part b I need to go through everything again, but removing the different pairs first
 // then trying again per cycle looking for the shortest length.
@@ -32,6 +32,50 @@ fn strip_characters(original : &str, to_strip : &str) -> String {
     original.chars().filter(|&c| !to_strip.contains(c)).collect()
 }
 
+pub fn testing(input: &str) -> (i32, i32) {
+
+    let alpha = "abcdefghijklmnopqrstuvwxyz";
+    let to_lower = |c: char| c.to_lowercase().next().unwrap();
+    let to_upper = |c: char| c.to_uppercase().next().unwrap();
+    let mut a_map: HashMap<char, char> = HashMap::new();
+    for mut c in alpha.chars() {
+        a_map.entry(to_lower(c)).or_insert(to_upper(c));
+        a_map.entry(to_upper(c)).or_insert(to_lower(c));
+    }
+
+    let mut stack: Vec<char> = Vec::new();
+    for c in input.chars() {
+        if !stack.is_empty() && c == a_map[&stack[stack.len()-1]] {
+            stack.pop();
+        } else {
+            stack.push(c);
+        }
+    }
+
+    let part_a=  stack.len() as i32;
+
+    let mut part_b = std::i32::MAX;
+    for rem in alpha.chars() {
+        let input2 = strip_characters(&input, &format!("{}{}", rem, a_map[&rem]));
+
+
+
+        let mut stack: Vec<char> = Vec::new();
+        for c in input2.chars() {
+            if !stack.is_empty() && c == a_map[&stack[stack.len() - 1]] {
+                stack.pop();
+            } else {
+                stack.push(c);
+            }
+        }
+
+        part_b = if (stack.len() as i32) < part_b { stack.len() as i32 } else { part_b };
+    }
+
+    (part_a, part_b)
+
+}
+
 fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
     let mut temp_c = ' ';
 
@@ -47,6 +91,7 @@ fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
     while count != input2.len() {
         let mut skip = false;
         count = input2.len();
+
         for c in input2.chars() {
             new.push(c);
             if !skip {

@@ -79,8 +79,12 @@ fn day_04_run() {
 fn day_05_run() {
     let path = "data/day_05.txt";
     let data = read(path);
-    // day_05::doit(&data);
-    let (part_a, part_b) = day_05::reduce(&data);
+
+    // based off of a python implementation
+    let (part_a, part_b) = day_05::testing(&data);
+
+
+    // let (part_a, part_b) = day_05::reduce(&data);
 
     assert_eq!(part_a, 11668);
     assert_eq!(part_b, 4652);
