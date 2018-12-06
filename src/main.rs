@@ -8,7 +8,9 @@ mod day_01;
 mod day_02;
 mod day_03;
 mod day_04;
+#[allow(dead_code)]
 mod day_05;
+mod day_06;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -83,13 +85,28 @@ fn day_05_run() {
     // based off of a python implementation
     let (part_a, part_b) = day_05::testing(&data);
 
-
+    // original solution
     // let (part_a, part_b) = day_05::reduce(&data);
 
     assert_eq!(part_a, 11668);
     assert_eq!(part_b, 4652);
 
     println!("Day 05: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
+fn day_06_run() {
+    let path = "data/day_06.txt";
+    let data = read(path);
+
+    // based off of a python implementation
+    let part_a = day_06::parse_coordinates(&data);
+    let part_b = day_06::calculate_all_squares_manhattan_distance_to_list(&data);
+
+    assert_eq!(part_a, 2342);
+    assert_eq!(part_b, 43302);
+
+    println!("Day 06: Part A: {}; Part B: {}", part_a, part_b);
 
 }
 
@@ -114,5 +131,6 @@ fn main() {
     time_it(day_03_run);
     time_it(day_04_run);
     time_it(day_05_run);
+    time_it(day_06_run);
 }
 
