@@ -35,13 +35,7 @@ fn strip_characters(original : &str, to_strip : &str) -> String {
 pub fn testing(input: &str) -> (i32, i32) {
 
     let alpha = "abcdefghijklmnopqrstuvwxyz";
-    let to_lower = |c: char| c.to_lowercase().next().unwrap();
-    let to_upper = |c: char| c.to_uppercase().next().unwrap();
-    let mut a_map: HashMap<char, char> = HashMap::new();
-    for mut c in alpha.chars() {
-        a_map.entry(to_lower(c)).or_insert(to_upper(c));
-        a_map.entry(to_upper(c)).or_insert(to_lower(c));
-    }
+    let a_map = create_alphabet_hash(alpha);
 
     let mut stack: Vec<char> = Vec::new();
     for c in input.chars() {
@@ -76,7 +70,21 @@ pub fn testing(input: &str) -> (i32, i32) {
 
 }
 
+fn create_alphabet_hash(alpha: &str) -> HashMap<char, char> {
+    let to_lower = |c: char| c.to_lowercase().next().unwrap();
+    let to_upper = |c: char| c.to_uppercase().next().unwrap();
+    let mut a_map: HashMap<char, char> = HashMap::new();
+    for mut c in alpha.chars() {
+        a_map.entry(to_lower(c)).or_insert_with(|| to_upper(c));
+        a_map.entry(to_upper(c)).or_insert_with(|| to_lower(c));
+    }
+    a_map
+}
+
 fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
+    let alpha = "abcdefghijklmnopqrstuvwxyz";
+    let _a_map = create_alphabet_hash(alpha);
+
     let mut temp_c = ' ';
 
     let mut new = Vec::new();

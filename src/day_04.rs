@@ -23,7 +23,7 @@ pub fn part_a(hmap: &mut HashMap<String, Vec<i32>>) -> i32{
 
         if k == guard {
             for (index, x) in v.iter().enumerate() {
-                if x > &most_minutes {
+                if *x > most_minutes {
                     most_minutes = *x;
                     the_minute = index;
                 }
@@ -44,7 +44,7 @@ pub fn part_a(hmap: &mut HashMap<String, Vec<i32>>) -> i32{
     guard_id * the_minute as i32
 }
 
-pub fn create_timesheet(items: Vec<Vec<String>>) -> HashMap<String, Vec<i32>> {
+pub fn create_timesheet(items: &[Vec<String>]) -> HashMap<String, Vec<i32>> {
     let re_guard = Regex::new(r"Guard #(\d+).+").unwrap();
 
     let mut hmap = HashMap::new();
@@ -80,7 +80,7 @@ pub fn create_timesheet(items: Vec<Vec<String>>) -> HashMap<String, Vec<i32>> {
         ["04", "01", "00", "53", "falls asleep"]
         ["04", "01", "00", "54", "wakes up"]
         */
-        if dirty == true {
+        if dirty {
             // println!("{} - [{}][{}] {} -> {}", guard, month, day, sleep, awake);
             for i in sleep..awake {
                 let mut temp = hmap.entry(guard.to_string()).or_insert(vec!(0; 60));

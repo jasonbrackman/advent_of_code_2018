@@ -21,6 +21,7 @@ pub fn counter_of_text(input: &str) -> (i32, i32) {
         seen.insert(total);
     }
 
+    // default -- not expected to get here
     (0, 0)
 
 }

@@ -11,6 +11,7 @@ mod day_04;
 #[allow(dead_code)]
 mod day_05;
 mod day_06;
+mod day_07;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -66,7 +67,7 @@ fn day_04_run() {
     let data = read(path);
 
     let items = day_04::get_sorted_items(&data);
-    let mut hmap = day_04::create_timesheet(items);
+    let mut hmap = day_04::create_timesheet(&items);
 
 
     let part_a = day_04::part_a(&mut hmap);
@@ -99,7 +100,6 @@ fn day_06_run() {
     let path = "data/day_06.txt";
     let data = read(path);
 
-    // based off of a python implementation
     let part_a = day_06::parse_coordinates(&data);
     let part_b = day_06::calculate_all_squares_manhattan_distance_to_list(&data);
 
@@ -110,6 +110,17 @@ fn day_06_run() {
 
 }
 
+fn day_07_run() {
+    let path = "data/day_07.txt";
+    let data = read(path);
+
+    day_07::doit(&data);
+
+    let part_a = 0;
+    let part_b = 0;
+    println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
+
+}
 
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
@@ -132,5 +143,6 @@ fn main() {
     time_it(day_04_run);
     time_it(day_05_run);
     time_it(day_06_run);
+    time_it(day_07_run);
 }
 
