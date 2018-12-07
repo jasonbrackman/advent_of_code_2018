@@ -131,7 +131,7 @@ fn doit(input: &str) -> (i32, HashSet<(char, char)>) {
 #[test]
 fn test_dedup() {
     let input = "dabCBAcaDA";
-    let mut data = input.to_owned();
+    let data = input.to_owned();
 
 
     println!("{}", data.len());

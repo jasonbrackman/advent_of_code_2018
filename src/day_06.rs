@@ -14,7 +14,7 @@ pub fn manhattan_distance(x: &[i32], y: &[i32]) -> i32 {
 }
 
 pub fn calculate_all_squares_manhattan_distance_to_list(input: &str) -> i32 {
-    let nums = get_points(input);
+    let nums = parse_lines_to_points(input);
 
     let mut board = [[99; 400]; 400];
 
@@ -48,8 +48,7 @@ pub fn calculate_all_squares_manhattan_distance_to_list(input: &str) -> i32 {
 }
 
 pub fn parse_coordinates(input: &str) -> i32 {
-    let nums = get_points(input);
-    // println!("{:?}-> {}", nums, nums.len());
+    let nums = parse_lines_to_points(input);
 
     let mut off_limits: HashSet<i32> = HashSet::new();
     off_limits.insert(99);
@@ -58,18 +57,17 @@ pub fn parse_coordinates(input: &str) -> i32 {
 
     for i in 0..400 {
         for j in 0..400 {
-            let mut distance = Vec::new();
-            for (a, b) in nums.iter() {
-                distance.push(manhattan_distance(&[i, j], &[*a, *b]));
-            }
-            // let max = distance.iter().max().unwrap();
-            // println!("Max Distance: {}", max);
+            let distance: Vec<i32> = nums
+                .iter()
+                .map(|(a, b)| manhattan_distance(&[i, j], &[*a, *b]))
+                .collect();
 
             let min = distance.iter().min().unwrap();
-            // println!("Min distance: {}", min);
+
             if distance.iter().filter(|&n| *n == *min).count() > 1 {
                 board[i as usize][j as usize] = 99;
             }
+
             else {
                 let index = distance.iter().position(|&r| r == *min).unwrap();
                 board[i as usize][j as usize] = index as i32;
@@ -88,31 +86,34 @@ pub fn parse_coordinates(input: &str) -> i32 {
             if !off_limits.contains(&board[i][j]) {
                 let x = hmap.entry(board[i][j]).or_insert(0);
                 *x += 1;
-
             }
         }
     }
 
-    let mut part_a = 0;
-    for (_x, y) in hmap.iter() {
-        if *y > part_a {
-            part_a = *y;
-            // println!("[{}] Possibly: {}", x, part_a); // 9460 too high
-        }
-    }
-
-    part_a
-
+    get_hashmap_max_value(&mut hmap)
 }
 
-fn get_points(input: &str) -> Vec<(i32, i32)> {
-    let mut nums: Vec<(i32, i32)> = Vec::new();
+pub fn get_hashmap_max_value(hmap: &mut HashMap<i32, i32>) -> i32 {
+// collect the max value in the hashmap
+    let mut max_value = 0;
+    for (_key, value) in hmap.iter() {
+        if *value > max_value {
+            max_value = *value;
+        }
+    }
+    max_value
+}
+
+fn parse_lines_to_points(input: &str) -> Vec<(i32, i32)> {
+    // take in a &str and parse it into x,y i32 coordinates.
+
     let re = Regex::new(r"^(\d+), (\d+)").unwrap();
+
+    let mut nums: Vec<(i32, i32)> = Vec::new();
+
     for line in input.lines() {
         for cap in re.captures_iter(line) {
-            nums.push(
-                (cap[1].parse::<i32>().unwrap(), cap[2].parse::<i32>().unwrap())
-            );
+            nums.push(( cap[1].parse::<i32>().unwrap(), cap[2].parse::<i32>().unwrap()) );
         }
     }
 
@@ -121,14 +122,6 @@ fn get_points(input: &str) -> Vec<(i32, i32)> {
 
 #[test]
 fn test_doit() {
-
-    let input = "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9";
-
     println!("MD: {}", manhattan_distance(&[0, 0],&[1, 6]));
     println!("MD: {}", manhattan_distance(&[0,1], &[1, 6]));
     println!("MD: {}", manhattan_distance(&[0,2], &[1, 6]));

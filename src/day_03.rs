@@ -29,10 +29,9 @@ pub fn doit(input: &str) -> (i32, usize){
         // println!("{}", line);
         let r = parse_line_to_components(line);
 
-        for i in r.from_left..r.from_left + r.width {
-            for j in r.from_top..r.from_top + r.height {
-                // println!("{}{}", i, j);
-                cells[i][j] += 1;
+        for row in cells.iter_mut().skip(r.from_left).take(r.width) {
+            for col in row.iter_mut().skip(r.from_top).take(r.height) {
+                *col += 1;
             }
         }
     }
@@ -47,18 +46,17 @@ pub fn doit(input: &str) -> (i32, usize){
         }
     }
 
-    // println!("Total Squares with 2 or more: {}", total);
-
     // part 2
+    // - determine if squares contain 2 ore more items
     let mut part_b = 0;
+
     for line in input.lines() {
         let mut is_good = true;
         let r = parse_line_to_components(line);
 
-        for i in r.from_left..r.from_left + r.width {
-            for j in r.from_top..r.from_top + r.height {
-
-                if cells[i][j] > 1 {
+        for row in cells.iter().skip(r.from_left).take(r.width) {
+            for col in row.iter().skip(r.from_top).take(r.height) {
+                if *col > 1 {
                     is_good = false;
                 }
             }
