@@ -145,10 +145,5 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
 
-    for c in "ABC".chars() {
-        println!("{}", c as u8 -64);
-    }
-
-
 }
 

@@ -1,191 +1,115 @@
-// use regex::Regex;
 use std::collections::{HashMap, HashSet};
+struct Tree {
+    content: HashMap<u8, HashSet<u8>>,
+    offset: u8,
+    ticks: i32,
+    worker_blocked_for: HashMap<u8, u8>
+}
+
+
+impl Tree {
+    pub fn new(input: &str) -> Tree {
+        let v_steps = Tree::parse_input_to_steps(input);
+        let content = Tree::build_tree_content(&v_steps);
+        Tree{content, offset: 64u8,  ticks:0, worker_blocked_for:HashMap::new()}
+    }
+
+    fn parse_input_to_steps(input: &str) -> Vec<(u8, u8)> {
+        let mut v_steps = Vec::new();
+        for line in input.lines() {
+            let x = line.chars().nth(5).expect("Cannot Parse From") as u8;
+            let y = line.chars().nth(36).expect("Cannot Parse To") as u8;
+            v_steps.push((x, y));
+        }
+        v_steps
+    }
+
+    fn build_tree_content(v_steps: &[(u8, u8)]) -> HashMap<u8, HashSet<u8>>{
+        // find all dependencies
+        let mut dependencies: HashMap<u8, HashSet<u8>> = HashMap::new();
+        for (a, b) in v_steps.iter() {
+            { // scoping to avoid multiple mutable borrows.
+                // build up the dependencies based on the rhs first
+                let mut current = dependencies.entry(b.clone()).or_insert_with(HashSet::new);
+                current.insert(a.clone());
+            }
+            // and also ensure that the lhs is taken care of -- it should be populated with the above
+            // OR be empty since it has no parents.
+            dependencies.entry(a.clone()).or_insert_with(HashSet::new);
+        }
+        dependencies
+    }
+
+    pub fn get_next_step(&mut self) -> Option<u8> {
+
+        let mut nexts = Vec::new();
+        for (k, v) in self.content.iter() {
+            if v.is_empty() {
+                nexts.push(k);
+            }
+        }
+        nexts.sort();
+
+        let result = nexts.first().unwrap();
+
+        if nexts.len() == 1 {
+            if self.worker_blocked_for.contains_key(result) {
+                if self.worker_blocked_for.get(&result).unwrap() > &0 {
+                    *self.worker_blocked_for.entry(**result).or_insert(0) -= 1;
+                    return None;
+                }
+            } else {
+                self.worker_blocked_for.insert(**result, *result - self.offset);
+                return None;
+            }
+        }
+
+        Some(**result)
+    }
+}
+
 
 pub fn doit(input: &str) {
-
-    let v_steps = parse_input_to_steps(input);
-
-    // find all dependencies
-    let mut dependencies: HashMap<&String, HashSet<&String>> = HashMap::new();
-    for (a, b) in v_steps.iter() {
-        { // scoping to avoid multiple mutable borrows.
-            // build up the dependencies based on the rhs first
-            let mut current = dependencies.entry(b).or_insert_with(HashSet::new);
-            current.insert(a);
-        }
-        // and also ensure that the lhs is taken care of -- it should be populated with the above
-        // OR be empty since it has no parents.
-        dependencies.entry(a).or_insert_with(HashSet::new);
-    }
-
     let mut part_a = String::new();
-    let mut ticks = 0;
+    let mut tree = Tree::new(input);
 
-    // What I care about:
-    // 1. that a thread is working when available
-    // 2. that a thread can't know about future work.  Just work to do.
-    //
-    let mut workers = vec![0u8; 2];
-    let mut qMap: HashMap<String, bool> = HashMap::new();
-    let mut current_key = String::from("");
+    // trying to figure out the queue system...
+    // let mut workers = vec![0u8; 2];
+    let mut current_keys = vec![0u8; 2];
 
-    while !dependencies.is_empty() {
-        ticks += 1;
+    while !tree.content.is_empty() && tree.ticks < 25 {
+        tree.ticks += 1;
 
+        for index in 0..2 {
 
-        let should_wait = false; // qMap.iter().any(|(_x, y)| y == &true);
-        for (_index, worker) in workers.iter_mut().enumerate() {
-            if *worker == 0 && !should_wait {
-                // obtaining new item -- but only do this if the current key is done
-                let (next_step, wait) = get_next_step(&mut dependencies);
-                if next_step != current_key {
-                    qMap.remove(&current_key);
-                    current_key = next_step.clone();
-                    qMap.entry(current_key.clone()).or_insert(wait);
-
-                    *worker = next_step.parse::<char>().unwrap() as u8 - 64;
-
-                }
-                if worker == &mut 0u8 {
-
-                    part_a.push(current_key.parse::<char>().unwrap());
-                    dependencies.remove(&current_key);
-                    for steps_necessary in dependencies.values_mut() {
-                        steps_necessary.remove(&current_key);
+            // obtaining new item -- but only do this if the current key is done
+            let next_step = tree.get_next_step();
+            if let Some(n) = next_step { if n != current_keys[index] {
+                    // println!("{}", n as char);
+                    current_keys[index] = n;
+                    part_a.push(current_keys[index] as char);
+                    tree.content.remove(&current_keys[index]);
+                    for steps_necessary in tree.content.values_mut() {
+                        steps_necessary.remove(&current_keys[index]);
                     }
                 }
-
             }
         }
 
-        for worker in workers.iter_mut() {
-            if worker > &mut 0u8 {
-                *worker -= 1;
-                // qMap.get_key_value()
-            }
-
-        }
-        println!("[{}] {} Workers: {:?} -> {:?}", ticks, current_key, workers, qMap);
-
-
+        println!("[{}] ({}, {}) -> {}",
+                 tree.ticks,
+                 current_keys[0] as char,
+                 current_keys[1] as char,
+                 part_a);
     }
 
-
+    assert_eq!(part_a, "CABDFE".to_string());
     println!("Part A: {}", part_a);
-    println!("Part B: {}", ticks);
+    println!("Part B: {}", tree.ticks);
 }
 
-fn get_next_step(dependencies: &mut HashMap<&String, HashSet<&String>>) -> (String, bool) {
-    //let mut next = "zzzzz".to_string();
-    // only accept an answer that is sorted to first.
-    let mut nexts = Vec::new();
-    for (k, v) in dependencies.iter() {
-        if v.is_empty() {
-            nexts.push(k.to_string());
-        }
-    }
-    nexts.sort();
-    (nexts.first().unwrap().to_string(), nexts.len() == 1)
-}
-
-fn parse_input_to_steps(input: &str) -> Vec<(String, String)> {
-    let mut v_steps = Vec::new();
-    for line in input.lines() {
-        let x = line.chars().nth(5).expect("Cannot Parse From").to_string();
-        let y = line.chars().nth(36).expect("Cannot Parse To").to_string();
-        v_steps.push((x, y));
-    }
-    v_steps
-}
-
-//    println!("================");
-//    let alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".to_string();
-//
-//    // step 01: Find out where to start
-//    // --> can only appear on the lhs and only appear once
-//    let mut lhs = Vec::new();
-//    let mut rhs = Vec::new();
-//    for (x, y) in v_steps.iter() {
-//        lhs.push(x);
-//        rhs.push(y);
-//    }
-//
-//    // start point won't have any parents
-//    let mut start_points = Vec::new();
-//    for l in lhs.iter() {
-//        if get_parents(&v_steps, l).is_empty() {
-//            start_points.push(l);
-//        }
-//    }
-//    start_points.dedup();
-//    start_points.sort();
-//
-//    // end points don't have any children.
-//    let mut end_point = String::new();
-//    for a in alpha.chars() {
-//        if !lhs.contains(&&a.to_string()) && rhs.contains(&&a.to_string()) {
-//            end_point.push(a);
-//        }
-//    }
-//
-//
-//    println!("{:?} ----> {}", start_points, end_point);
-//    for item in start_points.iter() {
-//        println!("{}--> {:?}", item, get_children(item, &v_steps));
-//    }
-
-    // level 1
-    //    for item in start_points.iter() {
-    //        for (x, y) in v_steps.iter() {
-    //            if x.contains(item) {
-    //                println!("{} -> {}", x, y);
-    //
-    //            }
-    //        }
-    //    }
-
-//    println!("current: {}", end_point);
-//    let collection = get_parents(&v_steps, &end_point);
-//    println!("Parents: {}-{:?}", end_point, collection);
-//    for item in collection.iter() {
-//        println!("{}-{:?}", item, get_parents(&v_steps, &item));
-//    }
-/*
-fn get_parents(two_stack: &[(String, String)], end_point: &str) -> Vec<String> {
-    let mut collection = Vec::new();
-    for (x, y) in two_stack.iter() {
-        if y == end_point {
-            collection.push(x.to_string());
-        }
-    }
-    collection.sort();
-    collection.reverse();
-    collection
-}
-
-fn get_children(start_point: &str, steps: &[(String, String)]) -> Vec<String> {
-    let mut stack = Vec::new();
-
-    for (a, b) in steps.iter() {
-        if a == start_point {
-            stack.push(b.clone());
-        }
-    }
-
-    stack.sort();
-    stack
-}
-*/
 #[test]
 fn test_doit() {
     assert_eq!(0, 0);
 }
 
-// counter example
-//let mut start_point = "";
-//for l in lhs.iter() {
-//    if lhs.iter().filter(|n| *n == l).count() == 1 {
-//        start_point = *l;
-//        break;
-//    }
-//}
