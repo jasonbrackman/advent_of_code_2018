@@ -111,7 +111,7 @@ fn day_06_run() {
 }
 
 fn day_07_run() {
-    let path = "data/day_07.txt";
+    let path = "data/day_07_test.txt";
     let data = read(path);
 
     day_07::doit(&data);
@@ -144,5 +144,11 @@ fn main() {
     time_it(day_05_run);
     time_it(day_06_run);
     time_it(day_07_run);
+
+    for c in "ABC".chars() {
+        println!("{}", c as u8 -64);
+    }
+
+
 }
 
