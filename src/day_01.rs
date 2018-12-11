@@ -4,7 +4,7 @@ pub fn counter_of_text(input: &str) -> (i32, i32) {
 
     let numbers: Vec<i32> = input
         .lines()
-        .map(|m| m.parse::<i32>().unwrap()).collect();
+        .map(|m| m.parse().unwrap()).collect();
 
     let part_a = numbers.iter().sum();
 

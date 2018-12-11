@@ -23,7 +23,7 @@ fn parse_line_to_components(input: &str) -> Rule {
 }
 
 pub fn doit(input: &str) -> (i32, usize){
-    let mut cells =  [ [0; 1000]; 1000 ];
+    let mut cells =  vec![ [0; 1000]; 1000 ];
 
     for line in input.lines() {
         // println!("{}", line);
