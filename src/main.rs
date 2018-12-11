@@ -116,7 +116,7 @@ fn day_07_run() {
 
     day_07::doit(&data);
 
-    let part_a = 0;
+    let part_a = "ABLCFNSXZPRHVEGUYKDIMQTWJO";
     let part_b = 0;
     println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
 
@@ -145,5 +145,9 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
 
+    let n = 65u8;
+    for c in "ABCD".chars() {
+        println!("{}", c as u8 - n);
+    }
 }
 
