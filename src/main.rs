@@ -114,10 +114,11 @@ fn day_07_run() {
     let path = "data/day_07.txt";
     let data = read(path);
 
-    day_07::doit(&data);
+    let (part_a, part_b) = day_07::doit(&data);
 
-    let part_a = "ABLCFNSXZPRHVEGUYKDIMQTWJO";
-    let part_b = 0;
+    assert_eq!(part_a, "ABLCFNSXZPRHVEGUYKDIMQTWJO".to_string());
+    assert_eq!(part_b, 1157);
+
     println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
 
 }
@@ -143,9 +144,6 @@ fn main() {
     time_it(day_04_run);
     time_it(day_05_run);
     time_it(day_06_run);
-    time_it(day_07_run); // 3333 / 1173 / 1172 / too high
-    for c in "AZ".chars() {
-        println!("{}", c as u8 - 4);
-    }
+    time_it(day_07_run);
 }
 

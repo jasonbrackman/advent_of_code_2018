@@ -7,7 +7,7 @@ struct Tree {
     offset: u8,
     ticks: i32,
     worker_blocked_for: HashMap<u8, u8>,
-    workers: [u8; 5],
+    workers: Vec<u8>,
     output: String
 }
 
@@ -25,15 +25,18 @@ impl fmt::Display for Tree {
 }
 
 impl Tree {
-    pub fn new(input: &str) -> Tree {
+    pub fn new(input: &str, worker_count: usize, offset: u8) -> Tree {
         let v_steps = Tree::parse_input_to_steps(input);
         let content = Tree::build_tree_content(&v_steps);
+        let mut workers = Vec::new();
+        workers.resize(worker_count, 0u8);
+
         Tree{
             content,
-            offset: 4u8,
+            offset,
             ticks:0,
             worker_blocked_for:HashMap::new(),
-            workers: [0; 5],
+            workers,
             output: String::from("")
         }
     }
@@ -47,7 +50,7 @@ impl Tree {
             }
         }
 
-        self.get_next_step();
+
 
         // remove completed content to the output and clean up the workers.
         for (k, v) in self.worker_blocked_for.iter() {
@@ -67,6 +70,8 @@ impl Tree {
             }
         }
 
+        self.get_next_step();
+        // println!("{}", self);
         self.ticks += 1;
     }
 
@@ -128,20 +133,19 @@ impl Tree {
     }
 }
 
-pub fn doit(input: &str) {
+pub fn doit(input: &str) -> (String, i32) {
 
-    let mut tree = Tree::new(input);
-    while !tree.content.is_empty() {
-        println!("{}", tree);
-        tree.tick();
-
+    let mut tree_a = Tree::new(input, 1, 64u8);
+    while !tree_a.content.is_empty() {
+        tree_a.tick();
     }
 
-    let part_a = tree.output;
-    //assert_eq!(part_a, "CABDFE".to_string());
-    //assert_eq!(tree.ticks, 15);
-    println!("Part A: {}", part_a);
-    println!("Part B: {}", tree.ticks);
+    let mut tree_b = Tree::new(input, 5, 4u8);
+    while !tree_b.content.is_empty() {
+        tree_b.tick();
+    }
+
+    (tree_a.output, tree_b.ticks-1)
 }
 
 #[test]
