@@ -111,7 +111,7 @@ fn day_06_run() {
 }
 
 fn day_07_run() {
-    let path = "data/day_07_test.txt";
+    let path = "data/day_07.txt";
     let data = read(path);
 
     day_07::doit(&data);
@@ -143,11 +143,9 @@ fn main() {
     time_it(day_04_run);
     time_it(day_05_run);
     time_it(day_06_run);
-    time_it(day_07_run);
-
-    let n = 65u8;
-    for c in "ABCD".chars() {
-        println!("{}", c as u8 - n);
+    time_it(day_07_run); //3333 too high 1173 / 1172 /
+    for c in "ABCDEF".chars() {
+        println!("{}", c as u8 - 4);
     }
 }
 
