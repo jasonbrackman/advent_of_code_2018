@@ -143,8 +143,8 @@ fn main() {
     time_it(day_04_run);
     time_it(day_05_run);
     time_it(day_06_run);
-    time_it(day_07_run); //3333 too high 1173 / 1172 /
-    for c in "ABCDEF".chars() {
+    time_it(day_07_run); // 3333 / 1173 / 1172 / too high
+    for c in "AZ".chars() {
         println!("{}", c as u8 - 4);
     }
 }

@@ -1,6 +1,7 @@
 use std::fmt;
 use std::collections::{HashMap, HashSet};
 
+
 struct Tree {
     content: HashMap<u8, HashSet<u8>>,
     offset: u8,
@@ -12,11 +13,12 @@ struct Tree {
 
 impl fmt::Display for Tree {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "[{}] -> {}", self.ticks, self.output)?;
-        write!(f, "\n")?;
+        writeln!(f, "[{}] -> {}", self.ticks, self.output)?;
         for (index, item) in self.workers.iter().enumerate() {
-            write!(f, "\tWorker {}: {} -> {:?}\n", index, self.workers[index] as char,
-                   self.worker_blocked_for.get(item))?;
+            writeln!(f, "\tWorker {}: {} -> {:?}",
+                     index,
+                     self.workers[index] as char,
+                     self.worker_blocked_for.get(item))?;
         }
         write!(f, "")
     }
@@ -40,7 +42,7 @@ impl Tree {
 
         // reduce time to block
         for (_, value) in self.worker_blocked_for.iter_mut() {
-            if value > &mut 0 {
+            if *value > 0 {
                 *value -= 1;
             }
         }
@@ -98,27 +100,28 @@ impl Tree {
     pub fn get_next_step(&mut self) {
 
         let mut nexts = Vec::new();
-        let workers_free = self.workers.iter().filter(|&&x| x == 0).count();
+
         // go through the workers and fill them up if free
-        for index in 0..workers_free {
-            // obtaining new item -- but only do somethign with it if the current key is done
+        for index in 0..self.workers.len() {
+            if self.workers[index] == 0 {
 
-            if nexts.is_empty() {
-                for (k, v) in self.content.iter() {
-                    if v.is_empty() {
-                        nexts.push(*k);
+                // obtaining new item -- but only do somethign with it if the current key is done
+                if nexts.is_empty() {
+                    for (k, v) in self.content.iter() {
+                        if v.is_empty() {
+                            nexts.push(*k);
+                        }
+                        nexts.sort();
+                        nexts.reverse();
                     }
-                    nexts.sort();
-                    nexts.reverse();
                 }
-            }
-            let next_step = nexts.pop();
 
-            if let Some(n) = next_step {
-                let currently_being_worked_on = self.workers.iter().any(|x| x == &n);
-                if !currently_being_worked_on {
-                    self.workers[index] = n;
-                    self.worker_blocked_for.entry(n).or_insert(n - self.offset);
+                if let Some(n) = nexts.pop() {
+                    let currently_being_worked_on = self.workers.iter().any(|x| x == &n);
+                    if !currently_being_worked_on {
+                        self.workers[index] = n;
+                        self.worker_blocked_for.entry(n).or_insert(n - self.offset);
+                    }
                 }
             }
         }
