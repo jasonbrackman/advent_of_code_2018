@@ -12,6 +12,7 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -118,6 +119,21 @@ fn day_07_run() {
 
     assert_eq!(part_a, "ABLCFNSXZPRHVEGUYKDIMQTWJO".to_string());
     assert_eq!(part_b, 1157);
+
+    println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
+fn day_08_run() {
+    let path = "data/day_08.txt";
+    let data = read(path);
+
+//    let (part_a, part_b) = day_07::doit(&data);
+//
+//    assert_eq!(part_a, "ABLCFNSXZPRHVEGUYKDIMQTWJO".to_string());
+//    assert_eq!(part_b, 1157);
+    let part_a = 0;
+    let part_b = 0;
 
     println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
 
