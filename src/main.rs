@@ -127,15 +127,15 @@ fn day_07_run() {
 fn day_08_run() {
     let path = "data/day_08.txt";
     let data = read(path);
+    let mut tree = day_08::Tree::new(&data);
+    tree.get_next_node(1);
+    // tree.print_nodes();
+    let part_a = tree.add_metadata();
+    assert_eq!(part_a, 44838);
 
-//    let (part_a, part_b) = day_07::doit(&data);
-//
-//    assert_eq!(part_a, "ABLCFNSXZPRHVEGUYKDIMQTWJO".to_string());
-//    assert_eq!(part_b, 1157);
-    let part_a = 0;
     let part_b = 0;
 
-    println!("Day 07: Part A: {}; Part B: {}", part_a, part_b);
+    println!("Day 08: Part A: {}; Part B: {}", part_a, part_b);
 
 }
 
@@ -161,5 +161,7 @@ fn main() {
     time_it(day_05_run);
     time_it(day_06_run);
     time_it(day_07_run);
+    time_it(day_08_run);
+
 }
 

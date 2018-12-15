@@ -1,29 +1,40 @@
-use std::fmt;
 use std::collections::VecDeque;
+use std::fmt;
 
 struct Node {
-    level: i32,
     children: i32,
-    metadata: Vec<i32>
+    metadata: Vec<i32>,
 }
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Parent: {}  with Children: {} -> Metadata: {:?}", self.level, self.children, self.metadata)
+        write!(
+            f,
+            "Children: {} -> Contains [{}] Metadata: {:?}",
+            self.children, self.metadata.len(), self.metadata
+        )
     }
 }
 
-struct Tree {
+pub struct Tree {
     data: VecDeque<i32>,
     nodes: Vec<Node>,
 }
 
 impl Tree {
-    fn new(input: &str) -> Tree {
-        let mut data = Tree::parse_data(input);
-        Tree { data, nodes: Vec::new() }
+    pub fn new(input: &str) -> Tree {
+        let data = Tree::parse_data(input);
+        Tree {
+            data,
+            nodes: Vec::new(),
+        }
     }
 
+    pub fn print_nodes(&self) {
+        for item in self.nodes.iter() {
+            println!("{}", item);
+        }
+    }
     fn parse_data(input: &str) -> VecDeque<i32> {
         input
             .split_whitespace()
@@ -31,24 +42,44 @@ impl Tree {
             .collect::<VecDeque<i32>>()
     }
 
-    pub fn get_next_node(&mut self, level: i32) {
-        // This node is unique as the start and end of the information is
-        // guaranteed to be related.
+    pub fn get_next_node(&mut self, take: i32) -> bool {
+        for _ in 0..take {
 
-        // First two numbers indicate the children & metacount
-        let children = self.data.pop_front().unwrap();
-        let metacount = self.data.pop_front().unwrap();
-
-        let mut metadata = Vec::new();
-        if level == 0 {
-            // For the root node the metacount is the last number of digits of the input.
-
-            for m in 0..metacount {
-                metadata.push(self.data.pop_back().unwrap());
+            // This node is unique as the start and end of the information is
+            // guaranteed to be related.
+            if self.data.is_empty() || take == 0 {
+                return false;
             }
-        }
 
-        self.nodes.push(Node { level, children, metadata });
+            // First two numbers indicate the children & metacount
+            let children = self
+                .data
+                .pop_front()
+                .expect("Child Count could not be determined");
+
+            let metacount = self.data.pop_front().expect("Missing metacount?");
+
+
+            let mut metadata = Vec::new();
+
+            if children != 0 {
+                // println!("Dealing +1 [{}] children <Recursive> ...", children);
+                // need to collect all the children nodes and what is left over is the metadata
+                self.get_next_node(children);
+            }
+            for _ in 0..metacount {
+                match self.data.pop_front() {
+                    Some(n) => metadata.push(n),
+                    _ => (),
+                }
+            }
+
+            self.nodes.push(Node {
+                children,
+                metadata,
+            });
+        }
+        true
     }
 
     pub fn add_metadata(&self) -> i32 {
@@ -58,26 +89,12 @@ impl Tree {
         }
         total
     }
-
-
 }
 
-fn get_info(input: &str) {
-    let mut tree = Tree::new(input);
-    tree.get_next_node(0);
-
-    for node in tree.nodes.iter() {
-        println!("Tree example: {}", node);
-    }
-
-    println!("Metadata Total: {}", tree.add_metadata());
-
-
-
-
-}
 #[test]
 fn test_parse_data() {
     let data = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2".to_string();
-    get_info(&data);
+    let mut tree = Tree::new(&data);
+    tree.get_next_node(1);
+    assert_eq!(tree.add_metadata(), 138);
 }
