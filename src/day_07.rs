@@ -50,8 +50,6 @@ impl Tree {
             }
         }
 
-
-
         // remove completed content to the output and clean up the workers.
         for (k, v) in self.worker_blocked_for.iter() {
             if v == &0 {
@@ -71,7 +69,7 @@ impl Tree {
         }
 
         self.get_next_step();
-        // println!("{}", self);
+        // println!("{}", self); // uncomment for debug
         self.ticks += 1;
     }
 
@@ -146,10 +144,5 @@ pub fn doit(input: &str) -> (String, i32) {
     }
 
     (tree_a.output, tree_b.ticks-1)
-}
-
-#[test]
-fn test_doit() {
-    assert_eq!(0, 0);
 }
 

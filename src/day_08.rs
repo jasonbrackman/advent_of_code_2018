@@ -1,11 +1,5 @@
 use std::fmt;
-
-fn parse_data(input: &str) -> Vec<i32> {
-    input
-        .split_whitespace()
-        .map(|x| x.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>()
-}
+use std::collections::VecDeque;
 
 struct Node {
     level: i32,
@@ -15,37 +9,68 @@ struct Node {
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "[{}] Children: {} -> Metadata: {:?}", self.level, self.children, self.metadata)
+        write!(f, "Parent: {}  with Children: {} -> Metadata: {:?}", self.level, self.children, self.metadata)
+    }
+}
+
+struct Tree {
+    data: VecDeque<i32>,
+    nodes: Vec<Node>,
+}
+
+impl Tree {
+    fn new(input: &str) -> Tree {
+        let mut data = Tree::parse_data(input);
+        Tree { data, nodes: Vec::new() }
     }
 
-}
-fn get_info(input: &str) {
-    // header
-    // child nodes
-    // metadata
+    fn parse_data(input: &str) -> VecDeque<i32> {
+        input
+            .split_whitespace()
+            .map(|x| x.parse::<i32>().unwrap())
+            .collect::<VecDeque<i32>>()
+    }
 
-    let data = parse_data(input).iter();
-    let mut nodes = Vec::new();
-    let mut level = 0;
-    {
-        let info: Vec<&i32> = data.take(2).collect();
-        let children = info[0];
-        let metacount = info[1];
+    pub fn get_next_node(&mut self, level: i32) {
+        // This node is unique as the start and end of the information is
+        // guaranteed to be related.
+
+        // First two numbers indicate the children & metacount
+        let children = self.data.pop_front().unwrap();
+        let metacount = self.data.pop_front().unwrap();
 
         let mut metadata = Vec::new();
-        for m in 0..*metacount {
-            metadata.push(m);
+        if level == 0 {
+            // For the root node the metacount is the last number of digits of the input.
+
+            for m in 0..metacount {
+                metadata.push(self.data.pop_back().unwrap());
+            }
         }
 
-        for index in 0..*children {
-            nodes.push(Node { level, children: *children, metadata });
-        }
-        level += 1;
+        self.nodes.push(Node { level, children, metadata });
     }
 
-    for node in nodes.iter() {
+    pub fn add_metadata(&self) -> i32 {
+        let mut total = 0;
+        for node in self.nodes.iter() {
+            total += node.metadata.iter().sum::<i32>();
+        }
+        total
+    }
+
+
+}
+
+fn get_info(input: &str) {
+    let mut tree = Tree::new(input);
+    tree.get_next_node(0);
+
+    for node in tree.nodes.iter() {
         println!("Tree example: {}", node);
     }
+
+    println!("Metadata Total: {}", tree.add_metadata());
 
 
 
