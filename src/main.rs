@@ -1,4 +1,5 @@
 extern crate regex;
+extern crate serde;
 
 use std::fs::File;
 use std::io::prelude::*;
@@ -128,12 +129,12 @@ fn day_08_run() {
     let path = "data/day_08.txt";
     let data = read(path);
     let mut tree = day_08::Tree::new(&data);
-    tree.get_next_node(1);
-    // tree.print_nodes();
-    let part_a = tree.add_metadata();
-    assert_eq!(part_a, 44838);
+    let root = tree.get_next_node();
 
-    let part_b = 0;
+    let part_a = root.add_metadata();
+    let part_b = root.add_metadata2();
+    assert_eq!(part_a, 44838);
+    assert_eq!(part_b, 22198);
 
     println!("Day 08: Part A: {}; Part B: {}", part_a, part_b);
 

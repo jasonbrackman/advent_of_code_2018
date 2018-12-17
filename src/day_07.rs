@@ -52,14 +52,13 @@ impl Tree {
 
         // remove completed content to the output and clean up the workers.
         for (k, v) in self.worker_blocked_for.iter() {
-            if v == &0 {
-                if !self.output.contains(*k as char) {
-                    self.output.push(*k as char);
-                    for worker in self.workers.iter_mut() {
-                        if worker == k {
-                            *worker = 0;
-                        }
+            if v == &0 && !self.output.contains(*k as char) {
+                self.output.push(*k as char);
+                for worker in self.workers.iter_mut() {
+                    if worker == k {
+                        *worker = 0;
                     }
+
                     self.content.remove(&k);
                     for steps_necessary in self.content.values_mut() {
                         steps_necessary.remove(&k);
