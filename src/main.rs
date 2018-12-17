@@ -14,6 +14,7 @@ mod day_05;
 mod day_06;
 mod day_07;
 mod day_08;
+mod day_09;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -140,6 +141,15 @@ fn day_08_run() {
 
 }
 
+fn day_09_run() {
+    let data = "459 players; last marble is worth 71790 points".to_string();
+    let part_a = 0;
+    let part_b = 0;
+    println!("Day 08: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
+
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
     let start = Instant::now();
@@ -163,6 +173,14 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
     time_it(day_08_run);
+
+    let players= vec![1i32, 2, 3, 4];
+    fn get_marble(position: usize, offset: usize, players: &Vec<i32>) {
+        println!("{:?}", players.iter().cycle().nth(position + offset - 1)); // [players.len() % 12]);
+    }
+
+    get_marble(3, 0, &players);
+    get_marble(6, 0, &players);
 
 }
 
