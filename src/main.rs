@@ -174,13 +174,7 @@ fn main() {
     time_it(day_07_run);
     time_it(day_08_run);
 
-    let players= vec![1i32, 2, 3, 4];
-    fn get_marble(position: usize, offset: usize, players: &Vec<i32>) {
-        println!("{:?}", players.iter().cycle().nth(position + offset - 1)); // [players.len() % 12]);
-    }
 
-    get_marble(3, 0, &players);
-    get_marble(6, 0, &players);
 
 }
 
