@@ -142,10 +142,13 @@ fn day_08_run() {
 }
 
 fn day_09_run() {
-    let data = "459 players; last marble is worth 71790 points".to_string();
-    let part_a = 0;
-    let part_b = 0;
-    println!("Day 08: Part A: {}; Part B: {}", part_a, part_b);
+    // let data = "459 players; last marble is worth 71790 points".to_string();
+
+    let part_a = day_09::part_a(459, 71790);
+    let part_b = day_09::part_a(459, 71790 * 100);
+
+    assert_eq!(part_a, 386151);
+    println!("Day 09: Part A: {}; Part B: {}", part_a, part_b);
 
 }
 
@@ -173,8 +176,6 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
     time_it(day_08_run);
-
-
-
+    time_it(day_09_run);
 }
 
