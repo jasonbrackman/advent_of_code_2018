@@ -14,7 +14,9 @@ mod day_05;
 mod day_06;
 mod day_07;
 mod day_08;
+#[allow(dead_code)]
 mod day_09;
+mod day_10;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -148,10 +150,20 @@ fn day_09_run() {
     let part_b = day_09::part_a(459, 71790 * 100);
 
     assert_eq!(part_a, 386151);
+    assert_eq!(part_b, 3211264152); // takes 6338 seconds currently... :(
     println!("Day 09: Part A: {}; Part B: {}", part_a, part_b);
 
 }
 
+fn day_10_run() {
+    let path = "data/day_10_test.txt";
+    let data = read(path);
+    day_10::parse(&data);
+    let part_a = 0;
+    let part_b = 0;
+    println!("Day 10: Part A: {}; Part B: {}", part_a, part_b);
+
+}
 
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
@@ -176,6 +188,7 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
     time_it(day_08_run);
-    time_it(day_09_run);
+    //time_it(day_09_run);
+    time_it(day_10_run);
 }
 

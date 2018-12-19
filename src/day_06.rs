@@ -94,7 +94,7 @@ pub fn parse_coordinates(input: &str) -> i32 {
 }
 
 pub fn get_hashmap_max_value(hmap: &mut HashMap<i32, i32>) -> i32 {
-// collect the max value in the hashmap
+    // collect the max value in the hashmap
     let mut max_value = 0;
     for (_key, value) in hmap.iter() {
         if *value > max_value {
