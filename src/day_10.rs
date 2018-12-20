@@ -9,15 +9,31 @@ pub struct Board {
     points: Vec<(Point, Point)>, // position point, velocity point
     width: usize,
     height: usize,
+    items: [ [char; 9]; 11]
 }
 
 impl Board {
     pub fn new(input: &str) -> Self {
         let points = Board::parse(input);
-        let width: i32 = *points.iter().map(|(pos, vel)| pos.x).collect::<Vec<i32>>().iter().max().unwrap();
-        let height: i32 = *points.iter().map(|(pos, vel)| pos.y).collect::<Vec<i32>>().iter().max().unwrap();
 
-        Board { points, width: width as usize, height: height as usize }
+        let w = points.iter().map(|(pos, vel)| pos.x).collect::<Vec<i32>>();
+        let w_max = w.iter().max().unwrap();
+        let w_min = w.iter().min().unwrap();
+        let width = (w_max + w_min.abs() + 1) as usize;
+
+        let h = points.iter().map(|(pos, vel)| pos.y).collect::<Vec<i32>>();
+        let h_max = h.iter().max().unwrap();
+        let h_min = h.iter().min().unwrap();
+        let height = (h_max + h_min.abs() + 1) as usize;
+
+        let mut items = [ ['.'; 9]; 11];
+        for x in 0..items.len() {
+            for y in 0..items[x].len() {
+                items[x][y] = '.';
+            }
+        }
+
+        Board { points, width, height, items }
     }
 
     fn parse(input: &str) -> Vec<(Point, Point)> {
@@ -25,13 +41,16 @@ impl Board {
         let re = Regex::new(r"position=<\s*(-?\d+),\s*(-?\d+)> velocity=<\s(-?\d+),\s*(-?\d+)>").unwrap();
         for line in input.lines() {
             for cap in re.captures_iter(line) {
-                let x1 = cap[1].parse::<i32>().expect("Missing pos.x");
-                let y1 = cap[2].parse::<i32>().expect("Missing pos.y");
-                let x2 = cap[3].parse::<i32>().expect("Missing vel.x");
-                let y2 = cap[4].parse::<i32>().expect("Missing vel.y");
 
-                let position = Point{x: x1, y: y1};
-                let velocity = Point{x: x2, y: y2};
+                let position = Point{
+                    x: cap[1].parse::<i32>().expect("Missing pos.x"),
+                    y: cap[2].parse::<i32>().expect("Missing pos.y")
+                };
+
+                let velocity = Point{
+                    x: cap[3].parse::<i32>().expect("Missing vel.x"),
+                    y: cap[4].parse::<i32>().expect("Missing vel.y")
+                };
 
                 start.push((position, velocity));
             }
@@ -42,14 +61,10 @@ impl Board {
 
     fn draw_position(&self) {
 
-        let w = self.width;
-        let h = self.height;
-        let mut display = [['.'; 20]; 20];
-        for (pos, vel) in self.points.iter() {
-            display[pos.x as usize][pos.y as usize] = '#';
-        }
+        for x in self.items.iter() {
 
-        println!("{:?}", display);
+        }
+        println!("{:?}", self.items);
     }
 }
 

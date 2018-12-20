@@ -158,7 +158,7 @@ fn day_09_run() {
 fn day_10_run() {
     let path = "data/day_10_test.txt";
     let data = read(path);
-    let board = day_10::Board::new(&data);
+    //let board = day_10::Board::new(&data);
     let part_a = 0;
     let part_b = 0;
     println!("Day 10: Part A: {}; Part B: {}", part_a, part_b);
