@@ -149,18 +149,44 @@ fn day_09_run() {
     let part_a = day_09::part_a(459, 71790);
     let part_b = day_09::part_a(459, 71790 * 100);
 
-    assert_eq!(part_a, 386151);
-    assert_eq!(part_b, 3211264152); // takes 6338 seconds currently... :(
+    assert_eq!(part_a, 386_151);
+    // assert_eq!(part_b, 3_211_264_152); // takes 6338 seconds currently... :(
     println!("Day 09: Part A: {}; Part B: {}", part_a, part_b);
 
 }
 
 fn day_10_run() {
-    let path = "data/day_10_test.txt";
+    let path = "data/day_10.txt";
     let data = read(path);
-    //let board = day_10::Board::new(&data);
-    let part_a = 0;
-    let part_b = 0;
+    let mut board = day_10::Board::new(&data);
+
+    board.init_board();
+    let mut counter = 0;
+    let mut go = true;
+    while go == true {
+        counter += 1;
+        board.update();
+        if counter > 10_000 { // just guessing to get to this 10_000; looking for easier iteration
+            go = board.init_board();
+        }
+    }
+    board.draw_position();
+    // println!("Took this long: {}", counter);
+    let part_a = "CRXKEZPZ";
+    /*
+    -> .xxxx...xxxxx...x....x..x....x..xxxxxx..xxxxxx..xxxxx...xxxxxx
+    -> x....x..x....x..x....x..x...x...x............x..x....x.......x
+    -> x.......x....x...x..x...x..x....x............x..x....x.......x
+    -> x.......x....x...x..x...x.x.....x...........x...x....x......x.
+    -> x.......xxxxx.....xx....xx......xxxxx......x....xxxxx......x..
+    -> x.......x..x......xx....xx......x.........x.....x.........x...
+    -> x.......x...x....x..x...x.x.....x........x......x........x....
+    -> x.......x...x....x..x...x..x....x.......x.......x.......x.....
+    -> x....x..x....x..x....x..x...x...x.......x.......x.......x.....
+    -> .xxxx...x....x..x....x..x....x..xxxxxx..xxxxxx..x.......xxxxxx
+    */
+    let part_b = counter - 1;
+    assert_eq!(part_b, 10081);
     println!("Day 10: Part A: {}; Part B: {}", part_a, part_b);
 
 }
