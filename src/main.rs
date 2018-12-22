@@ -160,7 +160,6 @@ fn day_10_run() {
     let data = read(path);
     let mut board = day_10::Board::new(&data);
 
-    board.init_board();
     let mut counter = 0;
     let mut go = true;
     while go == true {
@@ -185,7 +184,7 @@ fn day_10_run() {
     -> x....x..x....x..x....x..x...x...x.......x.......x.......x.....
     -> .xxxx...x....x..x....x..x....x..xxxxxx..xxxxxx..x.......xxxxxx
     */
-    let part_b = counter - 1;
+    let part_b = counter -1;
     assert_eq!(part_b, 10081);
     println!("Day 10: Part A: {}; Part B: {}", part_a, part_b);
 
