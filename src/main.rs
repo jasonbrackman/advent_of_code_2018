@@ -193,11 +193,11 @@ fn day_10_run() {
 
 fn day_11_run() {
     let part_a = day_11::part_a();
-    // let part_b = day_09::part_a(459, 71790 * 100);
+    let part_b = day_11::part_b();
 
     assert_eq!(part_a, (21,93));
-    // assert_eq!(part_b, 3_211_264_152); // takes 6338 seconds currently... :(
-    println!("Day 11: Part A: {:?}; Part B: {}", part_a, 0);
+    assert_eq!(part_b, (231, 108, 14)); // takes 6338 seconds currently... :(
+    println!("Day 11: Part A: {:?}; Part B: {:?}", part_a, part_b);
 
 }
 
