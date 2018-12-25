@@ -35,8 +35,7 @@ impl Game {
 
             self.twist = false;
 
-        } else {
-            if turn % 23 == 0 {
+        } else if turn % 23 == 0 {
                 self.index -= 7;
                 if self.index < 0 {
                     self.index += self.marbles.len() as i64;
@@ -47,7 +46,7 @@ impl Game {
                 self.players[player] += self.marbles[self.index as usize] as i64;
                 self.twist = true;
 
-            } else {
+        } else {
                 self.index += 2;
                 let length = self.marbles.len() as i64;
                 if self.index >= length {
@@ -56,7 +55,6 @@ impl Game {
 
                 self.marbles.insert(self.index as usize, turn);
                 self.twist = false;
-            }
         }
     }
 

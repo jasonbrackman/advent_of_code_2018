@@ -23,7 +23,7 @@ fn create_positions_for_grid(step: usize, serial: usize) -> HashMap<(usize, usiz
         for y in 1..=total {
             hmap
                 .entry((x, y))
-                .or_insert(get_fuel_cell_value((x, y), step, serial));
+                .or_insert_with(||get_fuel_cell_value((x, y), step, serial));
         }
     }
 
