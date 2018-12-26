@@ -18,6 +18,7 @@ mod day_08;
 mod day_09;
 mod day_10;
 mod day_11;
+mod day_12;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -145,8 +146,6 @@ fn day_08_run() {
 }
 
 fn day_09_run() {
-    // let data = "459 players; last marble is worth 71790 points".to_string();
-
     let part_a = day_09::part_a(459, 71790);
     let part_b = day_09::part_a(459, 71790 * 100);
 
@@ -163,7 +162,7 @@ fn day_10_run() {
 
     let mut counter = 0;
     let mut go = true;
-    while go == true {
+    while go {
         counter += 1;
         board.update();
         if counter > 10_000 { // just guessing to get to this 10_000; looking for easier iteration
@@ -201,6 +200,23 @@ fn day_11_run() {
 
 }
 
+fn day_12_run() {
+    let path = "data/day_12.txt";
+    let data = read(path);
+
+    let (mut pots, rules) = day_12::parse(&data);
+    // println!("{}", rules.len());
+    let part_a = day_12::process_pots(&mut pots, &rules, 20);
+    assert_eq!(part_a, 325);
+
+    let part_b = 0;
+    // assert_eq!(part_a, 2342);
+    // assert_eq!(part_b, 43302);
+
+    println!("Day 12: Part A: {}; Part B: {}", part_a, part_b);
+
+}
+
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
     let start = Instant::now();
@@ -227,5 +243,6 @@ fn main() {
     // time_it(day_09_run);
     time_it(day_10_run);
     time_it(day_11_run);
+    time_it(day_12_run);
 }
 
