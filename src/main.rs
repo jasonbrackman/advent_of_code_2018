@@ -144,7 +144,7 @@ fn day_08_run() {
     println!("Day 08: Part A: {}; Part B: {}", part_a, part_b);
 
 }
-
+#[allow(dead_code)]
 fn day_09_run() {
     let part_a = day_09::part_a(459, 71790);
     let part_b = day_09::part_a(459, 71790 * 100);
@@ -205,13 +205,18 @@ fn day_12_run() {
     let data = read(path);
 
     let (mut pots, rules) = day_12::parse(&data);
-    // println!("{}", rules.len());
     let part_a = day_12::process_pots(&mut pots, &rules, 20);
-    assert_eq!(part_a, 325);
 
-    let part_b = 0;
-    // assert_eq!(part_a, 2342);
-    // assert_eq!(part_b, 43302);
+
+    // 50B seems like a big enough number to cause the iterations to overflow.
+    // But, at some point the pots stabilize and growth is now happening in a consistent manner.
+    // sooo --- multiply the growth rate by the number of iterations left to go...
+    let (mut pots, rules) = day_12::parse(&data);
+    let result = day_12::process_pots(&mut pots, &rules, 1_000);
+    let part_b = result as i64 + (86 * (50_000_000_000-1_000));;
+
+    assert_eq!(part_a, 3337);
+    assert_eq!(part_b, 4300000000349);
 
     println!("Day 12: Part A: {}; Part B: {}", part_a, part_b);
 
@@ -240,7 +245,7 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
     time_it(day_08_run);
-    // time_it(day_09_run);
+    // time_it(day_09_run); / 797s -- so only uncomment if you can wait.
     time_it(day_10_run);
     time_it(day_11_run);
     time_it(day_12_run);

@@ -30,7 +30,7 @@ pub fn process_pots(pots: &mut Vec<char>, rules: &HashMap<Vec<char>, char>, gene
 
     let mut total = 0;
 
-    for index in 0..generations {
+    for _ in 0..generations {
         total = 0;
         pots_new.clear();
 
@@ -59,21 +59,19 @@ pub fn process_pots(pots: &mut Vec<char>, rules: &HashMap<Vec<char>, char>, gene
             }
         }
 
-        // println!("{}", negatives);
         let mut s = String::new();
         for c in pots_new.iter() { s.push(*c) }
-        println!("GEN: [{:2}] T:[{:4}] N:[{:3}] -> {}", index+1, total, negatives, s);
+        // println!("GEN: [{:2}] T:[{:4}] N:[{:3}] -> {}", index+1, total, negatives, s);
         pots_old.clear();
         pots_old = pots_new.clone();
     }
 
-    // println!("-> {:?}", pots_new);
     total as i32
 
 }
 
 #[test]
-fn test_doit() {
+fn test_day_12_test_data() {
     let path = "data/day_12_test.txt";
     let data = ::read(path);
 
@@ -82,4 +80,21 @@ fn test_doit() {
     let result = process_pots(&mut pots, &rules, 20);
     assert_eq!(result, 325);
 }
+
+
+#[test]
+fn test_day_12_push_forward_time() {
+    let path = "data/day_12.txt";
+    let data = ::read(path);
+
+    let (mut pots, rules) = parse(&data);
+    // at some point the pots stabilize and growth is now happening in a consistent manner.
+    // sooo --- multiply the growth rate by the number of iterations left to go...
+    let result = process_pots(&mut pots, &rules, 1_000);
+    println!("R1: {}", result);
+    println!("R1a:{}", result as i64 + (86 * (50_000_000_000-1_000)));
+
+
+}
+
 

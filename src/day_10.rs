@@ -69,6 +69,7 @@ impl Board {
         let values = self.points.iter().map(|(pos, _)| pos.y).collect::<Vec<i32>>();
         let max = *values.iter().max().unwrap();
         let min = *values.iter().min().unwrap();
+
         let mut result = max + min.abs() + 1;
         if max > 0 && min > 0 {
             result = max - min + 1;
