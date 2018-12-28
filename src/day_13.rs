@@ -164,6 +164,13 @@ impl Board {
         self.carts.sort_by_key( |x| x.pos);
 
         for (index, cart) in self.carts.iter_mut().enumerate() {
+            if crash_position_order.contains(&cart.pos) {
+                // skip out --
+                // A tick covers all the carts -- but a crashed cart should not move which could be
+                // encountered if the 2nd cart isn't checked for its crashed position.
+                continue;
+            }
+
             if debug {
                 println!("Old Char: {}", self.tracks[cart.pos.0][cart.pos.1]);
                 println!("Old Faceing -> {:?}", cart.facing);
@@ -197,20 +204,18 @@ pub fn part_a(data: &str) -> (usize, usize) {
     let mut board = Board::new(data);
 
     loop {
-        // board.pprint();
         let crashes = board.tick();
         if !crashes.is_empty() {
             let x = crashes.first().unwrap();
-            // println!("Crash: {},{}", x.1, x.0);
             return (x.1, x.0);
         }
     }
 }
 
 pub fn part_b(data: &str) -> (usize, usize) {
+    let mut counter = 0;
     let mut board = Board::new(data);
     loop {
-        // board.pprint();
         let crashes = board.tick();
         for crash in crashes.iter() {
             board.carts.retain(|x| x.pos != *crash);
@@ -228,8 +233,6 @@ fn test_day_13_straight_line() {
     let data = ::read(path);
     let result = part_a(&data);
     assert_eq!(result, (0, 3));
-
-
 }
 
 #[test]
@@ -238,7 +241,6 @@ fn test_day_13_tracks() {
     let data = ::read(path);
     let result = part_a(&data);
     assert_eq!(result, (7, 3));
-
 }
 
 #[test]
@@ -247,7 +249,6 @@ fn test_day_13_last_cart_position() {
     let data = ::read(path);
     let result = part_b(&data);
     assert_eq!(result, (6, 4));
-
 }
 
 
