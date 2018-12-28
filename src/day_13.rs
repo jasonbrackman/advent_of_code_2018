@@ -33,6 +33,68 @@ impl Cart {
 
         Cart{facing, intersections:Move::LEFT, pos}
     }
+
+    fn set_cart_next_pos(&mut self) {
+        let next_pos = match self.facing {
+            Face::UP => (self.pos.0 - 1, self.pos.1),
+            Face::DOWN => (self.pos.0 + 1, self.pos.1),
+            Face::LEFT => (self.pos.0, self.pos.1 - 1),
+            Face::RIGHT => (self.pos.0, self.pos.1 + 1),
+        };
+
+        self.pos = next_pos;
+    }
+
+    fn set_cart_next_facing(&mut self, next: &char) {
+
+        let facing = match next {
+            '-' => if self.facing == Face::LEFT { Face::LEFT } else { Face::RIGHT },
+            '|' => if self.facing == Face::UP { Face::UP } else { Face::DOWN },
+            '/' => match self.facing {
+                Face::RIGHT => Face::UP,
+                Face::LEFT => Face::DOWN,
+                Face::UP => Face::RIGHT,
+                Face::DOWN => Face::LEFT,
+            },
+            '\\' => match self.facing {
+                Face::RIGHT => Face::DOWN,
+                Face::LEFT => Face::UP,
+                Face::UP => Face::LEFT,
+                Face::DOWN => Face::RIGHT,
+            },
+            '+' => match self.intersections {
+                Move::LEFT => {
+                    self.intersections = Move::STRAIGHT;
+                    match self.facing {
+                        Face::LEFT => Face::DOWN,
+                        Face::RIGHT => Face::UP,
+                        Face::UP => Face::LEFT,
+                        Face::DOWN => Face::RIGHT,
+                    }
+                },
+
+                Move::STRAIGHT => {
+                    self.intersections = Move::RIGHT;
+                    self.facing.clone()
+                }
+
+                Move::RIGHT => {
+                    self.intersections = Move::LEFT;
+                    match self.facing {
+                        Face::LEFT => Face::UP,
+                        Face::RIGHT => Face::DOWN,
+                        Face::UP => Face::RIGHT,
+                        Face::DOWN => Face::LEFT,
+                    }
+                },
+            }
+            _ => unimplemented!("Something went wrong! {}", next),
+        };
+
+        self.facing = facing;
+    }
+
+
 }
 
 struct Board {
@@ -92,10 +154,11 @@ impl Board {
         }
     }
 
-    fn tick(&mut self) -> Option<(usize, usize)> {
+    fn tick(&mut self) -> Vec<(usize, usize)> {
         let debug = false;
 
-        let mut old_data = self.carts.iter().map(|x| x.pos).collect::<Vec<(usize, usize)>>();
+        let mut crash_position_order = Vec::new();
+        let mut position_cache = self.carts.iter().map(|x| x.pos).collect::<Vec<(usize, usize)>>();
 
         // ensure the order of carts always goes from top left to right then down
         self.carts.sort_by_key( |x| x.pos);
@@ -104,104 +167,68 @@ impl Board {
             if debug {
                 println!("Old Char: {}", self.tracks[cart.pos.0][cart.pos.1]);
                 println!("Old Faceing -> {:?}", cart.facing);
-            }
-
-            let next_move = match cart.facing {
-                Face::UP => (cart.pos.0 - 1, cart.pos.1),
-                Face::DOWN => (cart.pos.0 + 1, cart.pos.1),
-                Face::LEFT => (cart.pos.0, cart.pos.1 - 1),
-                Face::RIGHT => (cart.pos.0, cart.pos.1 + 1),
-            };
-
-            if debug {
                 println!("Old Pos: {:?}", cart.pos);
-                println!("New Pos: {:?}", next_move);
             }
 
-            if old_data.contains(&next_move) {
-                return Some(next_move);
-            }
-
-
-            let next = self.tracks[next_move.0][next_move.1];
-
-            let facing = match next {
-                '-' => if cart.facing == Face::LEFT { Face::LEFT } else { Face::RIGHT },
-                '|' => if cart.facing == Face::UP { Face::UP } else { Face::DOWN },
-                '/' => match cart.facing {
-                        Face::RIGHT => Face::UP,
-                        Face::LEFT => Face::DOWN,
-                        Face::UP => Face::RIGHT,
-                        Face::DOWN => Face::LEFT,
-                },
-                '\\' => match cart.facing {
-                        Face::RIGHT => Face::DOWN,
-                        Face::LEFT => Face::UP,
-                        Face::UP => Face::LEFT,
-                        Face::DOWN => Face::RIGHT,
-                },
-                '+' => match cart.intersections {
-                    Move::LEFT => {
-
-                        cart.intersections = Move::STRAIGHT;
-                        match cart.facing {
-                            Face::LEFT => Face::DOWN,
-                            Face::RIGHT => Face::UP,
-                            Face::UP => Face::LEFT,
-                            Face::DOWN => Face::RIGHT,
-                        }
-
-                    },
-                    Move::STRAIGHT => {
-                        cart.intersections = Move::RIGHT;
-                        cart.facing.clone()
-                    },
-                    Move::RIGHT => {
-                        cart.intersections = Move::LEFT;
-                        match cart.facing {
-                            Face::LEFT => Face::UP,
-                            Face::RIGHT => Face::DOWN,
-                            Face::UP => Face::RIGHT,
-                            Face::DOWN => Face::LEFT,
-                        }
-                    },
-                }
-                _ => unimplemented!("Something went wrong! {}", next),
-            };
+            cart.set_cart_next_pos();
+            let next = self.tracks[cart.pos.0][cart.pos.1];
+            cart.set_cart_next_facing(&next);
 
             if debug {
-                println!("New Facing: {:?}", facing);
+                println!("New Pos: {:?} ", cart.pos);
+                println!("New Facing: {:?}", cart.facing);
                 println!("New Char: {}", next);
                 println!("-------------------------------");
             }
 
-            cart.pos = next_move;
-            cart.facing = facing;
-            old_data.push(next_move);
-            old_data.remove(index);
+            if position_cache.contains(&cart.pos) {
+                crash_position_order.push(cart.pos);
+            }
+
+            position_cache[index] = cart.pos;
         }
 
-        None
+        crash_position_order
     }
+
 }
 
 pub fn part_a() -> (usize, usize) {
     let path = "data/day_13.txt";
     let data = ::read(path);
+
     let mut board = Board::new(&data);
 
-    for index in 0.. {
+    loop {
         // board.pprint();
-        match board.tick() {
-            Some(x) => {
-                println!("Crash: {},{}", x.1, x.0);
-                return (x.1, x.0);
-            },
-            _ => continue,
+        let crashes = board.tick();
+        if !crashes.is_empty() {
+            let x = crashes.first().unwrap();
+            // println!("Crash: {},{}", x.1, x.0);
+            return (x.1, x.0);
         }
     }
-    return (0, 0);
 }
+
+pub fn part_b() -> (usize, usize) {
+    let path = "data/day_13.txt";
+    let data = ::read(path);
+
+    let mut board = Board::new(&data);
+
+    loop {
+        // board.pprint();
+        let crashes = board.tick();
+        for crash in crashes.iter() {
+            board.carts.retain(|x| x.pos != *crash);
+        }
+        if board.carts.len() == 1 {
+            let result = board.carts[0].pos;
+            return (result.1, result.0)
+        }
+    }
+}
+
 #[test]
 fn test_day_13_straight_line() {
     let path = "data/day_13_test_a.txt";

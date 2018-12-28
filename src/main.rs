@@ -225,12 +225,12 @@ fn day_12_run() {
 
 fn day_13_run() {
     let part_a = day_13::part_a();
-    let part_b = 0;
+    let part_b = day_13::part_b();
 
     assert_eq!(part_a, (48, 20));
     // assert_eq!(part_b, 4300000000349);
 
-    println!("Day 13: Part A: {:?}; Part B: {}", part_a, part_b);
+    println!("Day 13: Part A: {:?}; Part B: {:?}", part_a, part_b);
 
 }
 
