@@ -193,11 +193,8 @@ impl Board {
 
 }
 
-pub fn part_a() -> (usize, usize) {
-    let path = "data/day_13.txt";
-    let data = ::read(path);
-
-    let mut board = Board::new(&data);
+pub fn part_a(data: &str) -> (usize, usize) {
+    let mut board = Board::new(data);
 
     loop {
         // board.pprint();
@@ -210,12 +207,8 @@ pub fn part_a() -> (usize, usize) {
     }
 }
 
-pub fn part_b() -> (usize, usize) {
-    let path = "data/day_13.txt";
-    let data = ::read(path);
-
-    let mut board = Board::new(&data);
-
+pub fn part_b(data: &str) -> (usize, usize) {
+    let mut board = Board::new(data);
     loop {
         // board.pprint();
         let crashes = board.tick();
@@ -233,38 +226,29 @@ pub fn part_b() -> (usize, usize) {
 fn test_day_13_straight_line() {
     let path = "data/day_13_test_a.txt";
     let data = ::read(path);
-    let mut board = Board::new(&data);
-    board.pprint();
-    for index in 0..10 {
-        println!("Tick -> {}", index);
-        match board.tick() {
-            Some(x) => {
-                println!("Crash: {:?}", x);
-                break
-            },
-            _ => continue,
-        }
-    }
+    let result = part_a(&data);
+    assert_eq!(result, (0, 3));
+
 
 }
 
 #[test]
 fn test_day_13_tracks() {
-    let path = "data/day_13_test_a.txt";
+    let path = "data/day_13_test_b.txt";
     let data = ::read(path);
-    let mut board = Board::new(&data);
+    let result = part_a(&data);
+    assert_eq!(result, (7, 3));
 
-    for index in 0.. {
-        board.pprint();
-        // println!("Tick -> {}", index);
-        match board.tick() {
-            Some(x) => {
-                println!("Crash: {:?}", x);
-                break
-            },
-            _ => continue,
-        }
-    }
 }
+
+#[test]
+fn test_day_13_last_cart_position() {
+    let path = "data/day_13_test_c.txt";
+    let data = ::read(path);
+    let result = part_b(&data);
+    assert_eq!(result, (6, 4));
+
+}
+
 
 

@@ -224,8 +224,11 @@ fn day_12_run() {
 }
 
 fn day_13_run() {
-    let part_a = day_13::part_a();
-    let part_b = day_13::part_b();
+    let path = "data/day_13.txt";
+    let data = ::read(path);
+
+    let part_a = day_13::part_a(&data);
+    let part_b = day_13::part_b(&data);
 
     assert_eq!(part_a, (48, 20));
     // assert_eq!(part_b, 4300000000349);
