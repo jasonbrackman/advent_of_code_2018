@@ -20,6 +20,7 @@ mod day_10;
 mod day_11;
 mod day_12;
 mod day_13;
+mod day_14;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -231,11 +232,22 @@ fn day_13_run() {
     let part_b = day_13::part_b(&data);
 
     assert_eq!(part_a, (48, 20));
-    // assert_eq!(part_b, 4300000000349);
+    assert_eq!(part_b, (59, 64));
 
     println!("Day 13: Part A: {:?}; Part B: {:?}", part_a, part_b);
 
 }
+
+fn day_14_run() {
+    let part_a = day_14::part_a("37", 84_601,);
+    let part_b = 0;
+//    assert_eq!(part_a, (48, 20));
+//    assert_eq!(part_b, (59, 64));
+
+    println!("Day 14: Part A: {:?}; Part B: {:?}", part_a, part_b);
+
+}
+
 
 pub fn time_it(func: fn() -> ()) {
     // Marker for benchmarking start
@@ -265,5 +277,6 @@ fn main() {
     time_it(day_11_run);
     time_it(day_12_run);
     time_it(day_13_run);
+    time_it(day_14_run);
 }
 

@@ -213,7 +213,6 @@ pub fn part_a(data: &str) -> (usize, usize) {
 }
 
 pub fn part_b(data: &str) -> (usize, usize) {
-    let mut counter = 0;
     let mut board = Board::new(data);
     loop {
         let crashes = board.tick();
