@@ -215,10 +215,10 @@ fn day_12_run() {
     // sooo --- multiply the growth rate by the number of iterations left to go...
     let (mut pots, rules) = day_12::parse(&data);
     let result = day_12::process_pots(&mut pots, &rules, 1_000);
-    let part_b = result as i64 + (86 * (50_000_000_000-1_000));;
+    let part_b = i64::from(result) + (86 * (50_000_000_000 - 1_000));;
 
     assert_eq!(part_a, 3337);
-    assert_eq!(part_b, 4300000000349);
+    assert_eq!(part_b, 4_300_000_000_349);
 
     println!("Day 12: Part A: {}; Part B: {}", part_a, part_b);
 
@@ -239,12 +239,12 @@ fn day_13_run() {
 }
 
 fn day_14_run() {
-    let part_a = day_14::part_a("37", 84_601,);
-    let part_b = 0;
-//    assert_eq!(part_a, (48, 20));
-//    assert_eq!(part_b, (59, 64));
+    let part_a = day_14::part_a("37", 84_601, None);
+    let part_b = day_14::part_a("37", 100_000, Some("084601"));
+    assert_eq!(part_a, "2688510125");
+    assert_eq!(part_b.len(), 20188250);
 
-    println!("Day 14: Part A: {:?}; Part B: {:?}", part_a, part_b);
+    println!("Day 14: Part A: {:?}; Part B: {:?}", part_a, part_b.len());
 
 }
 

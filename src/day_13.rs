@@ -45,7 +45,7 @@ impl Cart {
         self.pos = next_pos;
     }
 
-    fn set_cart_next_facing(&mut self, next: &char) {
+    fn set_cart_next_facing(&mut self, next: char) {
 
         let facing = match next {
             '-' => if self.facing == Face::LEFT { Face::LEFT } else { Face::RIGHT },
@@ -179,7 +179,7 @@ impl Board {
 
             cart.set_cart_next_pos();
             let next = self.tracks[cart.pos.0][cart.pos.1];
-            cart.set_cart_next_facing(&next);
+            cart.set_cart_next_facing(next);
 
             if debug {
                 println!("New Pos: {:?} ", cart.pos);
