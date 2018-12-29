@@ -4,6 +4,7 @@ Advent Of Code 2017 ( Rust )
 Solutions are run through the main.rs file -- although the main code for each solve is in the day's module.
 Running on my MacBook Pro (3.1ghz i7):
 
+```
 Day 01: Part A: 533; Part B: 73272
 	|-> Done in 0.018 seconds.
 Day 02: Part A: 4980; Part B: qysdtrkloagnfozuwujmhrbvx
@@ -43,3 +44,4 @@ Day 13: Part A: (48, 20); Part B: (59, 64)
 	|-> Done in 0.002 seconds.
 Day 14: Part A: "2688510125"; Part B: 20188250
 	|-> Done in 4.412 seconds.
+```
