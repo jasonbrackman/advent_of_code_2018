@@ -21,6 +21,7 @@ mod day_11;
 mod day_12;
 mod day_13;
 mod day_14;
+mod day_15;
 
 fn read(path: &str) -> String {
     let mut f = File::open(path).expect("file not found");
@@ -241,8 +242,8 @@ fn day_13_run() {
 fn day_14_run() {
     let part_a = day_14::part_a("37", 84_601, None);
     let part_b = day_14::part_a("37", 100_000, Some("084601"));
-    assert_eq!(part_a, "2688510125");
-    assert_eq!(part_b.len(), 20188250);
+    assert_eq!(part_a, [2, 6, 8, 8, 5, 1, 0, 1, 2, 5]);
+    assert_eq!(part_b.len(), 20_188_250);
 
     println!("Day 14: Part A: {:?}; Part B: {:?}", part_a, part_b.len());
 
@@ -272,7 +273,7 @@ fn main() {
     time_it(day_06_run);
     time_it(day_07_run);
     time_it(day_08_run);
-    // time_it(day_09_run); / 797s -- so only uncomment if you can wait.
+    // time_it(day_09_run); // 797s -- so only uncomment if you can wait.
     time_it(day_10_run);
     time_it(day_11_run);
     time_it(day_12_run);

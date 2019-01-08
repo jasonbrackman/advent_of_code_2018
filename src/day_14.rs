@@ -1,11 +1,9 @@
 
 
+pub fn part_a(input: &str, count: usize, needle: Option<&str>) -> Vec<i32> {
 
-
-pub fn part_a(input: &str, count: usize, needle: Option<&str>) -> String {
-
-    // setup anonymous function to convert str to Vec<u32>
-    let get_nums = |i: &str| -> Vec<u32> { i.chars().map(|x| x.to_digit(10).unwrap()).collect() };
+    // setup anonymous function to convert str to Vec<i32>
+    let get_nums = |i: &str| -> Vec<i32> { i.chars().map(|x| x.to_digit(10).unwrap() as i32).collect() };
 
     // setup the needle to be empty or set to u32s
     let temp = match needle {
@@ -21,18 +19,16 @@ pub fn part_a(input: &str, count: usize, needle: Option<&str>) -> String {
     loop {
         // Take care of the case of a specific number of recipes that need to pass
         // _magic number 10 is the count of recipes expected after the previous recipes are found
-        if scores.len() == count + 10 && temp.is_empty() {
-                scores.reverse();
-                let result = scores.iter().take(10).map(|i| i.to_string()).collect::<String>();
-                return result.chars().rev().collect::<String>();
+        if temp.is_empty() && scores.len() == count + 10 {
+            return scores[scores.len() - 10..].to_vec();
         }
 
         // if a needle is present let's break out early if match found
         if !temp.is_empty() {
             if scores.ends_with(&temp) {
-                return scores[..scores.len()-temp.len()].iter().map(|i| i.to_string()).collect::<String>();
+                return scores[..scores.len() - temp.len()].to_vec();
             } else if scores[..scores.len()-1].ends_with(&temp) {
-                return scores[..(scores.len() - temp.len() - 1)].iter().map(|i| i.to_string()).collect::<String>();
+                return scores[..(scores.len() - temp.len() - 1)].to_vec();
             }
         }
 
@@ -40,7 +36,7 @@ pub fn part_a(input: &str, count: usize, needle: Option<&str>) -> String {
         let recipe_01 = scores[players[0]];
         let recipe_02 = scores[players[1]];
 
-        // add two links together
+        // add the two links together
         let append_score = get_nums(&format!("{}", recipe_01 + recipe_02));
 
         // update chain
@@ -77,14 +73,14 @@ fn test_modulo() {
 fn test_part_a() {
     let input = "37";
     let result = part_a(input, 9, None);
-    assert_eq!(result, String::from("5158916779"));
+    assert_eq!(result, [5, 1, 5, 8, 9, 1, 6, 7, 7, 9]);
 }
 
 #[test]
 fn test_part_b() {
     let input = "37";
     let result = part_a(input, 25, Some("589"));
-    assert_eq!(result.len()-3, 11);
+    assert_eq!(result.len(), 11);
 }
 
 #[test]
@@ -92,13 +88,13 @@ fn test_needle_9() {
     let input = "37";
     let result = part_a(input, 10, Some("51589"));
     // println!("{}", result);
-    assert_eq!(result.len()-5, 9);
+    assert_eq!(result.len(), 9);
 }
 
 #[test]
 fn test_needle_2018() {
     let input = "37";
     let result = part_a(input, 10_000, Some("59414"));
-    println!("{}", result);
-    assert_eq!(result.len()-5, 2018);
+    println!("{:?}", result);
+    assert_eq!(result.len(), 2018);
 }

@@ -23,17 +23,6 @@ Day 08: Part A: 44838; Part B: 22198
 	|-> Done in 0 seconds.
 Day 09: Part A: 386151; Part B: 3211264152
 	|-> Done in 660.559 seconds.
-We likely have a winner in a previous round! ^ 
--> .xxxx...xxxxx...x....x..x....x..xxxxxx..xxxxxx..xxxxx...xxxxxx
--> x....x..x....x..x....x..x...x...x............x..x....x.......x
--> x.......x....x...x..x...x..x....x............x..x....x.......x
--> x.......x....x...x..x...x.x.....x...........x...x....x......x.
--> x.......xxxxx.....xx....xx......xxxxx......x....xxxxx......x..
--> x.......x..x......xx....xx......x.........x.....x.........x...
--> x.......x...x....x..x...x.x.....x........x......x........x....
--> x.......x...x....x..x...x..x....x.......x.......x.......x.....
--> x....x..x....x..x....x..x...x...x.......x.......x.......x.....
--> .xxxx...x....x..x....x..x....x..xxxxxx..xxxxxx..x.......xxxxxx
 Day 10: Part A: CRXKEZPZ; Part B: 10081
 	|-> Done in 0.081 seconds.
 Day 11: Part A: (21, 93); Part B: (231, 108, 14)
