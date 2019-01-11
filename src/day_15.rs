@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 // walls = '#'
 // cavern = '.'
 // goblin = 'G'
@@ -26,14 +26,13 @@ impl Combat {
 struct Board {
     cells: Vec<Vec<char>>,
     paths: HashMap<(usize, usize), Vec<(usize, usize)>>,
-    visited: Vec<(usize, usize)>
 }
 
 impl Board {
     fn new(input: &str) -> Board {
         let cells = Board::populate_cells(input);
         let paths = Board::calculate_paths(&cells);
-        Board{cells, paths, visited:Vec::new()}
+        Board{cells, paths}
     }
 
     fn populate_cells(input: &str) -> Vec<Vec<char>> {
@@ -54,18 +53,18 @@ impl Board {
                 // find valid children
                 let mut collection = Vec::new();
 
-                let x_min = if x > 0 { x-1 } else { x };
-                let x_max= if x == cells.len()-1 { x } else { x + 1 };
+                let mut neighbours = Vec::new();
 
-                let y_min = if y > 0 { y-1 } else { y };
-                let y_max= if y == cells[x].len()-1 { y } else { y + 1 };
+                // up first then left then right, then down
+                if x > 0 { neighbours.push((x-1, y)) }
+                if y > 0 { neighbours.push((x, y-1)) };
+                if x < cells.len()-1 { neighbours.push((x + 1, y)) };
+                if y < cells[x].len()-1 { neighbours.push((x, y+1)) };
 
-                for i in x_min..=x_max {
-                    for j in y_min..=y_max {
-                        match cells[i][j] {
-                            '.' | 'G' | 'E' => collection.push((i, j)),
-                            _ => (),
-                        }
+                for (i, j) in neighbours.into_iter() {
+                    match cells[i][j] {
+                        '.' | 'G' | 'E' => collection.push((i, j)),
+                        _ => (),
                     }
                 }
 
@@ -77,21 +76,29 @@ impl Board {
     }
 
     fn calculate_shortest_path(&mut self, from: (usize, usize), to: (usize, usize)) {
-        if self.visited.contains(&from) { return }
+        let mut visited = Vec::new();
+        let mut to_visit = VecDeque::new();
 
-        let mut neighbours: Vec<(usize, usize)> = self.paths.get(&from).unwrap().to_vec();
-        println!("{:?}", neighbours);
+        to_visit.extend(self.paths.get(&from).unwrap().to_vec());
 
-        for neighbour in neighbours.iter() {
-            if *neighbour == to {
-                println!("Found A Path to Destination!");
+        while !to_visit.is_empty() {
+            let neighbour = to_visit.pop_front().unwrap();
+
+            if neighbour == to {
+                println!("Found A Path to Destination! => {:?}", visited);
                 break
             }
             else {
-                self.visited.push(*neighbour);
-                self.calculate_shortest_path(*neighbour, to);
+                if !visited.contains(&neighbour) {
+                    println!("Checking neighbours... ");
+                    to_visit.extend(self.paths.get(&neighbour).unwrap().to_vec());
+                }
             }
+
+            visited.push(neighbour);
         }
+
+        println!("Unable to find a path to destination.");
     }
 
     fn display(&self) {
@@ -111,8 +118,10 @@ fn test_scan_actors_in_read_order() {
     let path = "data/day_15_test_scan.txt";
     let data = ::read(path);
     let mut board = Board::new(&data);
-    // board.display();
-    board.calculate_shortest_path((2,4), (3,3));
+    board.display();
+
+    // currenty just confirms there is a connection...
+    board.calculate_shortest_path((2,2), (2,5));
 }
 
 
