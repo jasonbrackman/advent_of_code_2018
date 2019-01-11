@@ -25,14 +25,15 @@ impl Combat {
 
 struct Board {
     cells: Vec<Vec<char>>,
-    paths: HashMap<(usize, usize), Vec<(usize, usize)>>
+    paths: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    visited: Vec<(usize, usize)>
 }
 
 impl Board {
     fn new(input: &str) -> Board {
         let cells = Board::populate_cells(input);
         let paths = Board::calculate_paths(&cells);
-        Board{cells, paths}
+        Board{cells, paths, visited:Vec::new()}
     }
 
     fn populate_cells(input: &str) -> Vec<Vec<char>> {
@@ -53,13 +54,21 @@ impl Board {
                 // find valid children
                 let mut collection = Vec::new();
 
-                for i in x-1..=x+1 {
-                    for j in y-1..=y+1{
-                        if i > 0 && j > 0 {
+                let x_min = if x > 0 { x-1 } else { x };
+                let x_max= if x == cells.len()-1 { x } else { x + 1 };
 
+                let y_min = if y > 0 { y-1 } else { y };
+                let y_max= if y == cells[x].len()-1 { y } else { y + 1 };
+
+                for i in x_min..=x_max {
+                    for j in y_min..=y_max {
+                        match cells[i][j] {
+                            '.' | 'G' | 'E' => collection.push((i, j)),
+                            _ => (),
                         }
                     }
                 }
+
                 hmap.entry((x, y)).or_insert(collection);
             }
         }
@@ -67,8 +76,22 @@ impl Board {
         hmap
     }
 
-    fn find_valid_children(&self, from: (usize, usize)) {
+    fn calculate_shortest_path(&mut self, from: (usize, usize), to: (usize, usize)) {
+        if self.visited.contains(&from) { return }
 
+        let mut neighbours: Vec<(usize, usize)> = self.paths.get(&from).unwrap().to_vec();
+        println!("{:?}", neighbours);
+
+        for neighbour in neighbours.iter() {
+            if *neighbour == to {
+                println!("Found A Path to Destination!");
+                break
+            }
+            else {
+                self.visited.push(*neighbour);
+                self.calculate_shortest_path(*neighbour, to);
+            }
+        }
     }
 
     fn display(&self) {
@@ -87,9 +110,14 @@ impl Board {
 fn test_scan_actors_in_read_order() {
     let path = "data/day_15_test_scan.txt";
     let data = ::read(path);
-    let board = Board::new(&data);
-    board.display();
+    let mut board = Board::new(&data);
+    // board.display();
+    board.calculate_shortest_path((2,4), (3,3));
 }
+
+
+
+
 
 
 
