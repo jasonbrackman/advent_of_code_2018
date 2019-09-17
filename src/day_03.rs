@@ -9,7 +9,7 @@ struct Rule {
 }
 
 fn parse_line_to_components(input: &str) -> Rule {
-    let items: Vec<&str> = input.split_whitespace().map(|s| s.trim_right_matches('.')).collect();
+    let items: Vec<&str> = input.split_whitespace().map(|s| s.trim_end_matches('.')).collect();
     let direction: Vec<&str> = items[2].split(',').collect();
     let width_height: Vec<&str> = items[3].split('x').collect();
 

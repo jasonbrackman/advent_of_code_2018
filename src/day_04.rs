@@ -83,7 +83,7 @@ pub fn create_timesheet(items: &[Vec<String>]) -> HashMap<String, Vec<i32>> {
         if dirty {
             // println!("{} - [{}][{}] {} -> {}", guard, month, day, sleep, awake);
             for i in sleep..awake {
-                let mut temp = hmap.entry(guard.to_string()).or_insert(vec!(0; 60));
+                let temp = hmap.entry(guard.to_string()).or_insert(vec!(0; 60));
                 temp[i as usize] += 1;
             }
             dirty = false;

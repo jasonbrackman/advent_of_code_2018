@@ -88,7 +88,7 @@ impl Tree {
         for (a, b) in v_steps.iter() {
             { // scoping to avoid multiple mutable borrows.
                 // build up the dependencies based on the rhs first
-                let mut current = dependencies.entry(b.clone()).or_insert_with(HashSet::new);
+                let current = dependencies.entry(b.clone()).or_insert_with(HashSet::new);
                 current.insert(a.clone());
             }
             // and also ensure that the lhs is taken care of -- it should be populated with the above

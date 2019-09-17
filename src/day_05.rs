@@ -10,7 +10,7 @@ pub fn reduce(input: &str) -> (i32, i32) {
 
     for (c1, c2) in pairs {
 
-        let mut s = format!("{}{}", c1, c2);//String::from(c1.to_string());
+        let s = format!("{}{}", c1, c2);//String::from(c1.to_string());
         // s.push(c2);
 
         let new = strip_characters(input, &s);
@@ -74,7 +74,7 @@ fn create_alphabet_hash(alpha: &str) -> HashMap<char, char> {
     let to_lower = |c: char| c.to_lowercase().next().unwrap();
     let to_upper = |c: char| c.to_uppercase().next().unwrap();
     let mut a_map: HashMap<char, char> = HashMap::new();
-    for mut c in alpha.chars() {
+    for c in alpha.chars() {
         a_map.entry(to_lower(c)).or_insert_with(|| to_upper(c));
         a_map.entry(to_upper(c)).or_insert_with(|| to_lower(c));
     }

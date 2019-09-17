@@ -10,7 +10,7 @@ pub fn count_character_repetition(input: &str) -> i64 {
     for line in input.lines() {
         let mut hmap: HashMap<char, i32> = HashMap::new();
         for c in line.chars() {
-            let mut x = hmap.entry(c).or_insert(0);
+            let x = hmap.entry(c).or_insert(0);
             *x += 1;
         }
 
