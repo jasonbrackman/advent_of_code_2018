@@ -1,15 +1,15 @@
 from string import ascii_uppercase, ascii_lowercase
 from collections import namedtuple, defaultdict
 
-pos = namedtuple('Pos', 'col row')
+pos = namedtuple("Pos", "col row")
 a_z = list(ascii_uppercase) + list(ascii_lowercase)
-path = r'.././data/day_06.txt'
+path = r".././data/day_06.txt"
 
 
 def get_positions(path: str) -> dict:
     positions = dict()
-    with open(path, 'r') as f:
-        coordinates = [line.strip().split(',') for line in f]
+    with open(path, "r") as f:
+        coordinates = [line.strip().split(",") for line in f]
         for (col, row) in coordinates:
             positions[pos(int(row), int(col))] = a_z.pop(0)
     return positions
@@ -21,7 +21,7 @@ def get_shortest_distance(positions, t):
         results[manhattan_distance(p, t)].append(n)
 
     key = sorted(results.keys())[0]
-    return results[key][0] if len(results[key]) == 1 else '.'
+    return results[key][0] if len(results[key]) == 1 else "."
 
 
 def get_distance_le(board, positions, less=0):
@@ -39,10 +39,10 @@ def set_board(positions: dict):
 
     offset = min(cols) if min(cols) > min(rows) else min(rows)
 
-    board = [['.'] * (max(cols)+offset) for _ in range(max(rows)+offset)]
+    board = [["."] * (max(cols) + offset) for _ in range(max(rows) + offset)]
 
-    for i in range(min(rows)-offset, max(rows)+offset):
-        for j in range(min(cols)-offset, max(cols)+offset):
+    for i in range(min(rows) - offset, max(rows) + offset):
+        for j in range(min(cols) - offset, max(cols) + offset):
             t = pos(i, j)
             if t in positions:
                 board[i][j] = positions[t]
@@ -54,7 +54,7 @@ def set_board(positions: dict):
 
 def display(board):
     for b in board:
-        print(''.join(b))
+        print("".join(b))
 
 
 def part01(board, positions):
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     positions = get_positions(path)
     board = set_board(positions)
     bound_positions = bounded_positions(board, positions)
-    
+
     p1 = part01(board, bound_positions)
     assert p1 == 2342
     p2 = get_distance_le(board, positions, less=10_000)

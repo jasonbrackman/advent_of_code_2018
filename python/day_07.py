@@ -59,7 +59,7 @@ def bfs2(graph, nodes):
 
 
 class Tick:
-    val = {c: i+60 for i, c in enumerate(ascii_uppercase, 1)}
+    val = {c: i + 60 for i, c in enumerate(ascii_uppercase, 1)}
     tick = 0
 
     def __init__(self, char):
@@ -108,20 +108,19 @@ def part2(job, graph, count=5):
 
 
 if __name__ == "__main__":
-    path = r'.././data/day_07_test.txt'
+    path = r".././data/day_07_test.txt"
     steps = get_steps(path)
     firsts = get_firsts(steps)
     p0 = bfs(steps, firsts)
-    assert ''.join(p0) == 'CABDFE', p0
+    assert "".join(p0) == "CABDFE", p0
 
-    path = r'.././data/day_07.txt'
+    path = r".././data/day_07.txt"
     steps = get_steps(path)
     first = get_firsts(steps)
     p1 = bfs(steps, first)
-    assert ''.join(p1) == "ABLCFNSXZPRHVEGUYKDIMQTWJO"
+    assert "".join(p1) == "ABLCFNSXZPRHVEGUYKDIMQTWJO"
 
     steps = get_steps(path)
     first = get_firsts(steps)
     p2 = part2(first, steps)
     assert p2 == 1157
-

@@ -2,13 +2,13 @@ from typing import List
 from collections import namedtuple
 import re
 
-pattern = r'#(\d+) @ (\d+),(\d+): (\d+)x(\d+)'
+pattern = r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)"
 n = namedtuple("swatch", "id, left_edge, top_edge, width, height")
 
 
 def parse(path):
     swatches = list()
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         items = [line.strip() for line in f]
         for i in items:
             r = re.search(pattern, i)
@@ -50,7 +50,7 @@ def part02(matrix, swatches):
 
 
 if __name__ == "__main__":
-    path = r'.././data/day_03.txt'
+    path = r".././data/day_03.txt"
     swatches = parse(path)
     matrix = get_matrix(swatches)
 
@@ -59,4 +59,3 @@ if __name__ == "__main__":
 
     p2 = part02(matrix, swatches)
     assert p2 == 1097
-

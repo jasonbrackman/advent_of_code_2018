@@ -17,12 +17,12 @@ class Guard:
             self.asleep[i] += 1
 
 
-compile01 = re.compile(r'\[(\d+)-(\d+)-(\d+) (\d+):(\d+)] \w+ (\w+|#\w+)')
+compile01 = re.compile(r"\[(\d+)-(\d+)-(\d+) (\d+):(\d+)] \w+ (\w+|#\w+)")
 
 
 def get_sorted_data(path):
     guards = list()
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
 
         lines = [line.strip() for line in f]
         for line in lines:
@@ -30,7 +30,7 @@ def get_sorted_data(path):
             year, month, day, *nums, last = r.groups()
             date = int(year + month + day)
             items = [date] + [int(num) for num in nums]
-            if last.startswith('#'):
+            if last.startswith("#"):
                 items.append(int(last[1:]))
             else:
                 items.append(last)
@@ -47,9 +47,9 @@ def get_schedule(data):
     for d in data:
 
         if type(d[-1]) == str:
-            if d[-1] == 'asleep':
+            if d[-1] == "asleep":
                 start = d[2]
-            if d[-1] == 'up':
+            if d[-1] == "up":
                 end = d[2]
                 current.sleep(start, end)
         else:
@@ -100,7 +100,7 @@ def part02(guards) -> int:
 
 
 if __name__ == "__main__":
-    path = r'.././data/day_04.txt'
+    path = r".././data/day_04.txt"
     data = get_sorted_data(path)
     guards = get_schedule(data)
 
@@ -109,4 +109,3 @@ if __name__ == "__main__":
 
     p2 = part02(guards)
     assert p2 == 51232
-

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 
 def parse(path):
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         return [int(i) for i in f.read().split()]
 
 
@@ -13,9 +13,6 @@ class Node:
         self.parent = parent
         self.children = [child] if child else []
         self.meta: Optional[List] = meta
-
-    def __str__(self):
-        return f"Children Count: {self.children_count}, Meta Count: {self.meta_count}, Parent: {self.parent}, Children: {self.children}, Meta: {self.meta}"
 
 
 def recurse(root):
@@ -31,10 +28,10 @@ def part01(data):
     # get Root Node
     a = data.pop(0)
     b = data.pop(0)
-    c = [data.pop() for r in range(b)]
+    c = [data.pop() for _ in range(b)]
     current = Node(a, b, c, parent=None)
+
     while data:
-        # print(data)
         a = data.pop(0)
         b = data.pop(0)
 
@@ -45,24 +42,43 @@ def part01(data):
 
         while len(current.children) == current.children_count:
             if not current.meta:
-                current.meta = [data.pop(0) for r in range(current.meta_count)]
+                current.meta = [data.pop(0) for _ in range(current.meta_count)]
 
             for child in reversed(current.children):
                 if not child.meta:
-                    child.meta = [data.pop(0) for r in range(child.meta_count)]
+                    child.meta = [data.pop(0) for _ in range(child.meta_count)]
 
-            if current.parent is not None:
-                current = current.parent
-            else:
+            if current.parent is None:
                 break
-    total = sum(current.meta)
-    total += recurse(current)
+
+            current = current.parent
+
+    return current
+    # return sum(current.meta) + recurse(current)
+
+
+def part02(root):
+    total = 0
+    if root.children_count == 0:
+        total += sum(root.meta)
+
+    else:
+        for i in root.meta:
+            try:
+                total += part02(root.children[i - 1])
+            except IndexError:
+                pass
+
     return total
 
 
 if __name__ == "__main__":
-    path_ = r'.././data/day_08.txt'
+    path_ = r".././data/day_08.txt"
     data = parse(path_)
 
     p1 = part01(data)
-    assert p1 == 44838
+    total = sum(p1.meta) + recurse(p1)
+    assert total == 44838
+
+    p2 = part02(p1)
+    assert p2 == 22198

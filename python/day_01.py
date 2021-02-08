@@ -21,8 +21,8 @@ def part02(items: List[int]) -> int:
 
 
 if __name__ == "__main__":
-    path = r'.././data/day_01.txt'
-    with open(path, 'r') as f:
+    path = r".././data/day_01.txt"
+    with open(path, "r") as f:
         items = [int(i) for i in f.readlines()]
 
     p1 = part01(items)

@@ -27,12 +27,12 @@ def part02(items: List[str]) -> str:
             compare = [int(a1 != a2) for a1, a2 in zip(a, b)]
             if sum(compare) == 1:
                 final = [a[i] for i, c in enumerate(compare) if c == 0]
-                return str(''.join(final))
+                return str("".join(final))
 
 
 if __name__ == "__main__":
-    path = r'.././data/day_02.txt'
-    with open(path, 'r') as f:
+    path = r".././data/day_02.txt"
+    with open(path, "r") as f:
         items = [i.strip() for i in f]
 
     p1 = part01(items)

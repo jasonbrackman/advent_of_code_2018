@@ -3,8 +3,8 @@ from collections import deque
 from string import ascii_lowercase
 
 
-path = r'.././data/day_05.txt'
-with open(path, 'r') as f:
+path = r".././data/day_05.txt"
+with open(path, "r") as f:
     polymer = f.read().strip()
 
 
@@ -24,7 +24,7 @@ def get_span(polymer):
                 s.append(a)
                 p.extendleft(b)
 
-    return ''.join(s)
+    return "".join(s)
 
 
 def part01(polymer):
@@ -41,7 +41,7 @@ def part02(polymer):
 
     for char in ascii_lowercase:
         if char in polymer:
-            result = polymer.replace(char, '').replace(char.upper(), '')
+            result = polymer.replace(char, "").replace(char.upper(), "")
             new = part01(result)
             if len(new) < low:
                 low = len(new)
