@@ -54,7 +54,6 @@ def part01(data):
             current = current.parent
 
     return current
-    # return sum(current.meta) + recurse(current)
 
 
 def part02(root):
