@@ -1,15 +1,5 @@
 import sys
 
-"""
-- Find the fuel cell's rack ID, which is its X coordinate plus 10.
-- Begin with a power level of the rack ID times the Y coordinate.
-- Increase the power level by the value of the grid serial number (your puzzle input).
-- Set the power level to itself multiplied by the rack ID.
-- Keep only the hundreds digit of the power level (so 12345 becomes 3; numbers with no hundreds digit become 0).
-- Subtract 5 from the power level.
-"""
-# x = horizontal
-# y = vertical
 puzzle_input = 1955
 
 
@@ -43,7 +33,7 @@ def initialize_cells():
             power_level = rack_id * y
             power_level += puzzle_input
             power_level *= rack_id
-            power_level = power_level // 10**2 % 10
+            power_level = power_level // 10 ** 2 % 10
             power_level -= 5
             cells[x][y] = power_level
 
@@ -71,10 +61,13 @@ def part_02():
 
     for index in range(1, 301):
         s, r = part_01(index)
-        if s > m:
-            m = s
-            loc = r
-            idx = index
+        if s < m:
+            # watching growth, it just so happens to increase until it
+            # reaches a max, and is never able to recover.  So end early.
+            return loc[0], loc[1], idx
+        m = s
+        loc = r
+        idx = index
 
     return loc[0], loc[1], idx
 
@@ -84,5 +77,4 @@ if __name__ == "__main__":
     assert p1 == [21, 93]
 
     a, b, c = part_02()
-    assert f"{a},{b},{c}" == "231,108, 14", (a, b, c)
-
+    assert f"{a},{b},{c}" == "231,108,14", (a, b, c)
