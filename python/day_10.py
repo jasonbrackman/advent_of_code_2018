@@ -3,7 +3,7 @@ import sys
 from collections import namedtuple
 from copy import deepcopy
 
-pattern = re.compile(r'(-?\d+)')
+pattern = re.compile(r"(-?\d+)")
 
 Pos = namedtuple("Pos", "x, y")
 Vel = namedtuple("Vel", "x, y")
@@ -12,7 +12,7 @@ Vel = namedtuple("Vel", "x, y")
 def parse():
     pos = []
     vel = []
-    with open(r'.././data/day_10.txt') as f:
+    with open(r".././data/day_10.txt") as f:
         for line in f:
             p1, p2, v1, v2 = re.findall(pattern, line)
             p = Pos(int(p1), int(p2))
@@ -23,14 +23,14 @@ def parse():
 
 
 def grid(rows, cols):
-    return [['.'] * rows for _ in range(cols)]
+    return [["."] * rows for _ in range(cols)]
 
 
 def part01(grid, new, offset):
     for n in new:
-        grid[n.y-offset][n.x-offset] = '#'
+        grid[n.y - offset][n.x - offset] = "#"
     for g in grid:
-        print(' '.join(g))
+        print(" ".join(g))
 
 
 def get_row_col_and_offsets(pos):
@@ -71,8 +71,3 @@ if __name__ == "__main__":
 
         size = new_size
         start = new
-
-
-
-
-
