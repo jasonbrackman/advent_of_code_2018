@@ -55,7 +55,7 @@ pub fn process_pots(pots: &mut Vec<char>, rules: &HashMap<Vec<char>, char>, gene
 
         for (index, pot) in pots_new.iter().enumerate() {
             if *pot == '#' {
-                total += index as i32 + negatives;;
+                total += index as i32 + negatives;
             }
         }
 

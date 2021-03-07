@@ -216,7 +216,7 @@ fn day_12_run() {
     // sooo --- multiply the growth rate by the number of iterations left to go...
     let (mut pots, rules) = day_12::parse(&data);
     let result = day_12::process_pots(&mut pots, &rules, 1_000);
-    let part_b = i64::from(result) + (86 * (50_000_000_000 - 1_000));;
+    let part_b = i64::from(result) + (86 * (50_000_000_000 - 1_000));
 
     assert_eq!(part_a, 3337);
     assert_eq!(part_b, 4_300_000_000_349);
