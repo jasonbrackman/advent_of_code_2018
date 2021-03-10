@@ -3,20 +3,19 @@
  - open cavern (.),
  and starting position of every Goblin (G) and Elf (E)
 """
-from typing import List
+
+from typing import List, Tuple
 from collections import deque
 from collections import defaultdict
 
-POSITIONS = [
-             (-1, 0),  # up
+POSITIONS = [(-1, 0),  # up
              (0, -1),  # left
-             (0, 1),  # right
-             (1, 0),  # down
-            ]
+             (0, 1),   # right
+             (1, 0)]  # down
 
 
 class Node:
-    def __init__(self, state, previous=None):
+    def __init__(self, state, previous=None, level=0):
         self.state = state
         self.previous = previous
 
@@ -30,14 +29,8 @@ class Unit:
     def is_alive(self):
         return self.hit_points > 0
 
-    def identify_targets(self):
-        pass
-
     def attack(self, target):
         target.hit_points -= self.attack_power
-
-    def move(self, target):
-        pass
 
     def manhattan_distance(self, pos):
         return abs(self.pos[0] - pos[0]) + abs(self.pos[1] - pos[1])
@@ -59,11 +52,6 @@ class Game:
         self.board = []
         self.units = []
         self.parse(path)
-
-    # @property
-    # def units(self):
-    #     return self._units
-    #     # return [unit for unit in self._units if unit.is_alive()]
 
     def parse(self, path):
         with open(path) as handle:
@@ -101,60 +89,61 @@ class Game:
         return result
 
     def get_targets(self, my_type: type(Unit)) -> List[type(Unit)]:
-        return [enemy for enemy in self.units if type(enemy) != my_type]
+        return [enemy for enemy in self.units if enemy.is_alive() and type(enemy) != my_type]
 
-    def in_range(self, enemies: List) -> List:
+    def in_range(self, enemies: List[Unit]) -> List:
         results = []
         for enemy in enemies:
-            results.extend(self.get_neighbours(enemy))
+            results.extend(self.get_neighbours(enemy.pos))
         return results
 
-    def get_shortest_path(self, unit, target):
+    def get_shortest_path(self, unit: Unit, target: Tuple[int, int]):
         visited = set()
         queue = deque([Node(unit.pos, None)])
+        visited.add(unit.pos)
+
         while queue:
+            queue = deque(sorted(queue, key=lambda x: abs(x.state[0] - target[0]) + abs(x.state[1] - target[1])))
             node = queue.popleft()
-            visited.add(node.state)
 
             if node.state == target:
                 return node
 
-            nn = self.get_neighbours(Unit(node.state))
-            queue.extend([Node(n, node) for n in nn if n not in visited])
+            neighbours = self.get_neighbours(node.state)
+            for neighbour in neighbours:
+                if neighbour in visited:
+                    continue
+
+                visited.add(neighbour)
+                queue.append(Node(neighbour, node))
 
         return None
 
     def reachable(self, unit, target) -> bool:
         visited = set()
-        neighbours = self.get_neighbours(unit)
+        neighbours = deque(self.get_neighbours(unit.pos))
+        visited.add(unit.pos)
         while neighbours:
-            test = neighbours.pop()
-            visited.add(test)
-
+            test = neighbours.popleft()
             if test == target:
                 return True
 
-            nn = self.get_neighbours(Unit(test))
-            neighbours.extend([n for n in nn if n not in visited])
+            for n in self.get_neighbours(test):
+                if n in visited:
+                    continue
+                visited.add(n)
+                neighbours.append(n)
 
         return False
 
     @staticmethod
     def nearest(unit, positions: List) -> List:
-        values = dict()
+        values = defaultdict(list)
         for position in positions:
             r = unit.manhattan_distance(position)
-            if r not in values:
-                values[r] = [position]
-            else:
-                values[r].append(position)
-        if values:
-            return values[min(values)]
+            values[r].append(position)
 
-        return []
-
-    def chosen(self, enemies: List) -> Unit:
-        ...
+        return values[min(values)] if values else []
 
     def sort_units(self):
         """Sort units by reading order.  Left to right and top down."""
@@ -165,119 +154,109 @@ class Game:
         results = []
         r1, c1 = unit.pos
         for (r2, c2) in POSITIONS:
-            results.extend([t for t in enemies if t.pos == (r1 + r2, c1 + c2)])
+            row, col = r1 + r2, c1 + c2
+            results.extend([t for t in enemies if t.pos == (row, col)])
         return results
 
     @staticmethod
     def sort_enemies_to_attack(enemies):
-        """Enemies are already in Read Order, but those enmies with the lowest HP should
+        """Enemies are already in Read Order, but those enemies with the lowest HP should
         be returned and sorted."""
+
         health = defaultdict(list)
         for enemy in enemies:
             health[enemy.hit_points].append(enemy)
-        key = min(health)
-        return health[key]
 
-    def get_neighbours(self, enemy):
-        results = []
+        return health[min(health)]
 
-        r1, c1 = enemy.pos
-        for (r2, c2) in POSITIONS:
-            if self.is_open(r1 + r2, c1 + c2):
-                results.append((r1+r2, c1+c2))
-        return results
+    def get_neighbours(self, enemy_pos):
+        r1, c1 = enemy_pos
+        return [(r1 + r2, c1 + c2) for (r2, c2) in POSITIONS if self.is_open(r1+r2, c1+c2)]
 
     def is_open(self, row, col):
-
-        if self.board[row][col] == '.':
-            for u in self.units:
-                if u.pos == (row, col):
-                    return False
-            return True
-        return False
+        for p in self.units:
+            if p.pos == (row, col):
+                return False
+        return self.board[row][col] == '.'
 
 
-def test_read_order():
-    path = r".././data/day_15_test_scan.txt"
-    g = Game(path)
-    g.sort_units()
-
-    for i, u in enumerate(g.units, 1):
-        u.name = i
-
-    expected = [list("#######"),
-                list("#.1.2.#"),
-                list("#3.4.5#"),
-                list("#.6.7.#"),
-                list("#######"),
-                ]
-    result = g.display(silent=True)
-#    for expect, result in zip(expected, result):
-#        assert ''.join(expect) == ''.join(result), (expect, result)
-
-
-def attack_enemies(g, unit, targets):
+def attack_enemies(unit, targets):
     enemies = Game.get_adjacent_enemies(unit, targets)
+
     if not enemies:
         return False
+
     sorted_enemies = Game.sort_enemies_to_attack(enemies)
-    assert 0 < len(sorted_enemies) <= 4
-    # print(f"{unit} is Attacking: ", sorted_enemies[0])
     unit.attack(sorted_enemies[0])
-    if not sorted_enemies[0].is_alive():
-        g.units.remove(sorted_enemies[0])
+
     return True
 
 
 def round_(g):
     for unit in g.units:
-
+        if not unit.is_alive():
+            continue
         targets = g.get_targets(type(unit))
         if not targets:
-            print("No More Targets!")
             return False
-        did_attack = attack_enemies(g, unit, targets)
+
+        did_attack = attack_enemies(unit, targets)
         if did_attack is False:
-            inrange = g.in_range(targets)
-
-            reachable = [item for item in sorted(inrange) if g.reachable(unit, item)]
-
+            in_range = g.in_range(targets)
+            reachable = [item for item in in_range if g.reachable(unit, item)]
             if reachable:
                 nearest_chosen = sorted(g.nearest(unit, reachable))[0]
                 shortest_path = g.get_shortest_path(unit, nearest_chosen)
+                unit.pos = get_next_pos(shortest_path)
+                attack_enemies(unit, targets)
 
-                moves = [shortest_path.state]
-                while shortest_path.previous:
-                    shortest_path = shortest_path.previous
-                    moves.append(shortest_path.state)
-
-                new_pos = moves[-2]
-                unit.pos = new_pos
-                attack_enemies(g, unit, targets)
     return True
 
 
+def get_next_pos(shortest_path):
+    moves = [shortest_path.state]
+    while shortest_path.previous:
+        shortest_path = shortest_path.previous
+        moves.append(shortest_path.state)
+    return moves[-2]
+
+
 def main():
-    test_read_order()
 
-    path = r".././data/day_15_test_d.txt"
-    g = Game(path)
-    index = 0
-    should_continue = True
-    while should_continue:
+    paths = [
+        (r".././data/day_15_f0.txt", 27730),
+        (r".././data/day_15_f1.txt", 36334),
+        (r".././data/day_15_f2.txt", 39514),
+        (r".././data/day_15_f3.txt", 27755),
+        (r".././data/day_15_f5.txt", 28944),
+        (r".././data/day_15_f6.txt", 146),
+        (r".././data/day_15_f4.txt", 18740),  # error
+        # (r".././data/day_15.txt", None)  # fails to find the correct answer
+    ]
+
+    for path, expected in paths:
+        g = Game(path)
+        index = 0
+        should_continue = True
+        while should_continue:
+            g.units = [u for u in g.units if u.is_alive()]
+            g.display()
+            print(f"Round: {index}")
+            g.sort_units()
+
+            should_continue = round_(g)
+            index += 1
+
+        g.units = [u for u in g.units if u.is_alive()]
         g.display()
-        print(f"Round: {index}")
-        g.sort_units()
-        should_continue = round_(g)
-
-        index += 1
-        # if index == 2:
-        #     should_continue = False
-    total = sum(unit.hit_points for unit in g.units)
-    print(total * (index-1))
+        total = sum(unit.hit_points for unit in g.units if unit.is_alive()) * (index-1)
+        print(path, total)
+        assert total == expected, f"Got {total}, expected {expected}"
 
 
 if __name__ == "__main__":
     # import cProfile
     # cProfile.run("main()")
     main()
+
+"bad: 220252, 230945, 236632"
