@@ -1,5 +1,5 @@
 # advent_of_code_2018
-Advent Of Code 2017 ( Rust )
+Advent Of Code 2018 ( Rust )
 
 Solutions are run through the main.rs file -- although the main code for each solve is in the day's module.
 Running on my MacBook Pro (3.1ghz i7):
@@ -34,3 +34,6 @@ Day 13: Part A: (48, 20); Part B: (59, 64)
 Day 14: Part A: "2688510125"; Part B: 20188250
 	|-> Done in 4.412 seconds.
 ```
+Added Python code
+Day 15 is broken -- generated a visual to help debug:
+![](python/images/day_15.gif)
