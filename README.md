@@ -35,5 +35,7 @@ Day 14: Part A: "2688510125"; Part B: 20188250
 	|-> Done in 4.412 seconds.
 ```
 Added Python code
+
 Day 15 is broken -- generated a visual to help debug:
+
 ![](python/images/day_15.gif)
