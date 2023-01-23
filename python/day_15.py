@@ -55,7 +55,7 @@ def bfs(start: Pos, goal: Pos, units, walls) -> Optional[Node]:
     return None
 
 
-def parse(path: Path) -> Tuple[Set[Pos], Set[Unit], List[List[str]]]:
+def parse(path: Path, elf_ap: int) -> Tuple[Set[Pos], Set[Unit], List[List[str]]]:
     board: List[List[str]] = [list(line) for line in helpers.lines(path)]
     walls: Set[Pos] = set()
     units: Set[Unit] = set()
@@ -63,7 +63,10 @@ def parse(path: Path) -> Tuple[Set[Pos], Set[Unit], List[List[str]]]:
         for x in range(len(board[0])):
             char = board[y][x]
             if char in 'GE':
-                units.add(Unit((y, x), char))
+                u = Unit((y, x), char)
+                if u.type == 'E':
+                    u.ap = elf_ap
+                units.add(u)
                 board[y][x] = '.'
             elif char in '#':
                 walls.add((y, x))
@@ -123,7 +126,7 @@ def attack(unit: Unit, enemies: List[Unit]) -> None:
         cheapest_unit.hp -= unit.ap
 
 
-def part01(walls, units, board) -> Optional[int]:
+def part01(walls: Set[Pos], units: Set[Unit], board: List[List[str]]) -> Optional[int]:
     for round in range(1_000):
         # pprint(round, board, units)
         units = {u for u in units if u.hp > 0}
@@ -171,12 +174,72 @@ def part01(walls, units, board) -> Optional[int]:
     return None
 
 
+def part02(walls: Set[Pos], units: Set[Unit], board: List[List[str]]) -> Optional[int]:
+
+    for spin in range(1_000):
+        # pprint(round, board, units)
+        units = {u for u in units if u.hp > 0}
+
+        for unit in sorted(units):
+            for u in units:
+                if u.type == 'E' and u.hp <= 0:
+                    return None
+
+            # Skip over units that are 'dead': hp of zero or less
+            if unit.hp <= 0:
+                continue
+
+            elves = sorted([u for u in units if u.type == 'E' and u.hp > 0])
+            goblins = sorted([u for u in units if u.type == 'G' and u.hp > 0])
+            enemies = elves if unit.type == 'G' else goblins
+
+            # End if no enemies to fight
+            if len(enemies) == 0:
+                # pprint(round, board, units)
+                s = sum(u.hp for u in units if u.hp > 0)
+                # print('Found on round: ', round, 'with a sum of', s, '=', round * s, 'for', unit)
+                return spin * s
+
+            # if one step away from any enemy find the enemy that has the lowest HP in reading order and attack
+            if not is_beside(unit, enemies):
+                # Else, find the shortest path to all enemies and make a move...
+                possibles: Dict[int, List[Tuple[Pos, Pos]]] = defaultdict(list)
+                blockers = {u.pos for u in units if u.hp > 0}.union(walls)
+                start_steps = list(_neighbours(unit.pos, blockers))
+
+                for enemy in enemies:
+                    for neighbour in _neighbours(enemy.pos, blockers):
+                        for start_step in start_steps:
+                            r = bfs(start_step, neighbour, units, walls)
+                            if r is not None:
+                                #         TargetD          Enemy sq.   Unit.sq
+                                possibles[r.depth].append((enemy.pos, start_step))
+
+                if possibles:
+                    # Take te lowest key's enemy, unit
+                    k, v = sorted(possibles.items())[0]
+                    move = sorted(v, key=lambda x: x[0])[0][1]
+                    if move not in blockers:
+                        unit.pos = move
+
+            attack(unit, enemies)
+
+    return None
+
+
 def run() -> None:
     path = Path(__file__).parent / '..' / 'data' / 'day_15.txt'
-    walls, units, board = parse(path)
 
+    walls, units, board = parse(path, elf_ap=3)
     p1 = part01(walls, units, board)
     assert p1 == 227290
+
+    for index in range(4, 100):
+        walls, units, board = parse(path, elf_ap=index)
+        p2 = part02(walls, units, board)
+        if p2 is not None:
+            assert p2 == 53725
+            break
 
 
 if __name__ == "__main__":
