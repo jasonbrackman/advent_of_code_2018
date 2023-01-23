@@ -36,6 +36,6 @@ Day 14: Part A: "2688510125"; Part B: 20188250
 ```
 Added Python code
 
-Day 15 is broken -- generated a visual to help debug:
+Day 15 visual to help debug (didn't help at the time, but kept it):
 
 ![](python/images/day_15.gif)
