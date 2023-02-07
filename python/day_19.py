@@ -59,35 +59,39 @@ class Machine:
 
     def addr(self, code: Code) -> None:
         self.registers[code.c] = self.registers[code.a] + self.registers[code.b]
-        msg = "Important: Increase of R0!" if code.c == 0 else ''
+        msg = "Important: Increase of R0!" if code.c == 0 else ""
         self.debug(Frame(code, "R", "+", "R", message=msg))
 
     def addi(self, code: Code) -> None:
         self.registers[code.c] = self.registers[code.a] + code.b
-        msg = "Important: Increase of R0!" if code.c == 0 else ''
+        msg = "Important: Increase of R0!" if code.c == 0 else ""
         self.debug(Frame(code, "R", "+", "V", message=msg))
 
-    def mulr(self, code: Code):
+    def mulr(self, code: Code) -> None:
         self.registers[code.c] = self.registers[code.a] * self.registers[code.b]
         self.debug(Frame(code, "R", "*", "R"))
 
-    def muli(self, code: Code):
+    def muli(self, code: Code) -> None:
         self.registers[code.c] = self.registers[code.a] * code.b
         self.debug(Frame(code, "R", "*", "V"))
 
     def setr(self, code: Code) -> None:
         self.registers[code.c] = self.registers[code.a]
-        self.debug(Frame(code, "R", '=', "!"))
+        self.debug(Frame(code, "R", "=", "!"))
 
     def seti(self, code: Code) -> None:
         self.registers[code.c] = code.a
-        self.debug(Frame(code, "V", '=', "!"))
+        self.debug(Frame(code, "V", "=", "!"))
 
     def gtrr(self, code: Code) -> None:
         """(greater-than register/register) sets register C to 1 if register A is greater than register B.
         Otherwise, register C is set to 0."""
-        self.registers[code.c] = 1 if self.registers[code.a] > self.registers[code.b] else 0
-        self.debug(Frame(code, "R", '>', "R", message="If R2 > R1 increase R1; else ..."))
+        self.registers[code.c] = (
+            1 if self.registers[code.a] > self.registers[code.b] else 0
+        )
+        self.debug(
+            Frame(code, "R", ">", "R", message="If R2 > R1 increase R1; else ...")
+        )
 
     def eqrr(self, code: Code) -> None:
         """(equal register/register) sets register C to 1 if register A is equal to register B.
@@ -96,7 +100,11 @@ class Machine:
         self.registers[code.c] = (
             1 if self.registers[code.a] == self.registers[code.b] else 0
         )
-        self.debug(Frame(code, "R", "==", "R", message="IF R3 * R2 == R1 increase R4 to 1 else 0"))
+        self.debug(
+            Frame(
+                code, "R", "==", "R", message="IF R3 * R2 == R1 increase R4 to 1 else 0"
+            )
+        )
 
 
 def parse(path: Path) -> Tuple[int, List[Code]]:

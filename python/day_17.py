@@ -12,7 +12,7 @@ Board = Dict[int, Set[int]]
 Pos = Tuple[int, int]
 
 
-def parse(path) -> Board:
+def parse(path: Path) -> Board:
     lines = helpers.lines(path)
 
     board = defaultdict(set)
@@ -31,7 +31,7 @@ def parse(path) -> Board:
     return board
 
 
-def drip(board: Board):
+def drip(board: Board) -> Tuple[int, int]:
     start_pos = (0, 500)
     min_y = min(board.keys())
     max_y = max(board.keys())
@@ -79,7 +79,7 @@ def drip(board: Board):
     return result, len(water)
 
 
-def get_possibles(board, drip_pos, water):
+def get_possibles(board: Board, drip_pos: Pos, water: Set[Pos]) -> Tuple[bool, Set[Pos]]:
     y_pos = drip_pos[0]
     y_down = drip_pos[0] + 1
     x_clays = board[y_pos]
@@ -123,12 +123,10 @@ def get_possibles(board, drip_pos, water):
     else:
         return False, drops | possibles
 
-    return False, set()
 
-
-def pprint(board, water, items):
-    x_min = sorted(water | items, key=lambda x: x[1])[0][1]
-    x_max = sorted(water | items, key=lambda x: x[1])[-1][1]
+def pprint(board: Board, water: Set[Pos], items: Set[Pos]) -> None:
+    x_min = sorted(water | items, key=lambda x_: x_[1])[0][1]
+    x_max = sorted(water | items, key=lambda x_: x_[1])[-1][1]
     for y in range(0, max(board.keys()) + 1):
         s = ""
         for x in range(x_min - 5, x_max + 5):
@@ -138,10 +136,8 @@ def pprint(board, water, items):
                 s += "+"
             elif (y, x) in water:
                 s += "~"
-                count += 1
             elif (y, x) in items:
                 s += "|"
-                count += 1
             else:
                 s += " "
         print(s)

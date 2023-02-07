@@ -45,19 +45,17 @@ def aura(pos: Pos, data: Data) -> str:
     elif target == TREE:
         return LUMBERYARD if items[LUMBERYARD] >= 3 else TREE
 
-    elif target == LUMBERYARD:
-        if items[LUMBERYARD] >= 1 and items[TREE] >= 1:
-            return LUMBERYARD
-        else:
-            return GROUND
+    # elif target == LUMBERYARD:
+    # Else Target Must Be LUMBERYARD
+    return LUMBERYARD if items[LUMBERYARD] >= 1 and items[TREE] >= 1 else GROUND
 
 
-def parse(path: Path):
+def parse(path: Path) -> List[List[str]]:
     lines = helpers.lines(path)
     return [list(line) for line in lines]
 
 
-def spin(data):
+def spin(data: List[List[str]]) -> List[List[str]]:
     new_data = []
     for y in range(len(data)):
         nd = []
@@ -67,12 +65,9 @@ def spin(data):
     return new_data
 
 
-def part_01(data):
+def part_01(data: List[List[str]]) -> int:
     for c in range(10):
         data = spin(data)
-
-    # for row in data:
-    #     print("".join(row))
 
     tree_count = 0
     lumb_count = 0
@@ -84,7 +79,8 @@ def part_01(data):
 
     return tree_count * lumb_count
 
-def part_02(data):
+
+def part_02(data: List[List[str]]) -> int:
     results = []
     for c in range(1, 1_000_000_000+1):
         data = spin(data)
@@ -95,18 +91,20 @@ def part_02(data):
             # print('Found Repeat:', c, repeat_start)
             # looks like repeat starts at 537 ... matching 508 ... 535 (28 frames then cycle)
 
-            r = (1_000_000_000 - c) % 28
-            d = list(results[repeat_start + r])
+            remainder = (1_000_000_000 - c) % 28
+            data_rows: List[str] = list(results[repeat_start + remainder])
 
             tree_count = 0
             lumb_count = 0
-            for row in d:
+            for row in data_rows:
                 for r in row:
-                    tree_count += (r == TREE)
-                    lumb_count += (r == LUMBERYARD)
+                    tree_count += r == TREE
+                    lumb_count += r == LUMBERYARD
             # r = tree_count, lumb_count
             return tree_count * lumb_count
             # print(tree_count, "*", lumb_count, '=', tree_count * lumb_count)
+    return -1
+
 
 def run() -> None:
     path = Path(__file__).parent / '.' / '..' / 'data' / 'day_18.txt'

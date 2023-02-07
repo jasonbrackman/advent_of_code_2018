@@ -18,7 +18,7 @@ def part02(items: List[int]) -> int:
         if results[current] == 1:
             return current
         results[current] += 1
-
+    return current
 
 if __name__ == "__main__":
     path = r".././data/day_01.txt"

@@ -3,12 +3,7 @@ from collections import deque
 from string import ascii_lowercase
 
 
-path = r".././data/day_05.txt"
-with open(path, "r") as f:
-    polymer = f.read().strip()
-
-
-def get_span(polymer):
+def get_span(polymer: str) -> str:
     s = list()
     p = deque(polymer)
 
@@ -27,31 +22,39 @@ def get_span(polymer):
     return "".join(s)
 
 
-def part01(polymer):
+def part01(polymer: str) -> int:
     count = len(polymer)
     while True:
         polymer = get_span(polymer)
         if len(polymer) == count:
-            return polymer
+            return len(polymer)
         count = len(polymer)
 
 
-def part02(polymer):
+def part02(polymer: str) -> int:
     low = sys.maxsize
 
     for char in ascii_lowercase:
         if char in polymer:
             result = polymer.replace(char, "").replace(char.upper(), "")
             new = part01(result)
-            if len(new) < low:
-                low = len(new)
+            if new < low:
+                low = new
 
     return low
 
 
-if __name__ == "__main__":
+def run() -> None:
+    path = r".././data/day_05.txt"
+    with open(path, "r") as f:
+        polymer = f.read().strip()
+
     p1 = part01(polymer)
-    assert len(p1) == 11668
+    assert p1 == 11668
 
     p2 = part02(polymer)
     assert p2 == 4652
+
+
+if __name__ == "__main__":
+    run()

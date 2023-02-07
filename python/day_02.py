@@ -28,7 +28,7 @@ def part02(items: List[str]) -> str:
             if sum(compare) == 1:
                 final = [a[i] for i, c in enumerate(compare) if c == 0]
                 return str("".join(final))
-
+    return ""
 
 if __name__ == "__main__":
     path = r".././data/day_02.txt"

@@ -11,7 +11,7 @@ or if they can form a chain of points, each a manhattan distance no more than 3 
 between the two of them. 
 (That is, if a point is close enough to a constellation, it "joins" that constellation.)"""
 
-Point = namedtuple('Point', 'x, y, z, t')
+Point = namedtuple("Point", "x, y, z, t")
 
 
 def manhattan_distance(p1: Point, p2: Point) -> int:
@@ -31,36 +31,36 @@ def parse(path: Path) -> List[Point]:
 
 
 def test01() -> None:
-    path = Path(__file__).parent / '..' / 'data' / 'day_25_test.txt'
+    path = Path(__file__).parent / ".." / "data" / "day_25_test.txt"
     points = parse(path)
     connections = create_connections(points)
     assert unique_connection_count(connections) == 2
 
 
 def test02() -> None:
-    path = Path(__file__).parent / '..' / 'data' / 'day_25_test2.txt'
+    path = Path(__file__).parent / ".." / "data" / "day_25_test2.txt"
     points = parse(path)
     connections = create_connections(points)
     assert unique_connection_count(connections) == 4
 
 
 def test03() -> None:
-    path = Path(__file__).parent / '..' / 'data' / 'day_25_test3.txt'
+    path = Path(__file__).parent / ".." / "data" / "day_25_test3.txt"
     points = parse(path)
     connections = create_connections(points)
     assert unique_connection_count(connections) == 8
 
 
 def test04() -> None:
-    path = Path(__file__).parent / '..' / 'data' / 'day_25_test4.txt'
+    path = Path(__file__).parent / ".." / "data" / "day_25_test4.txt"
     points = parse(path)
     connections = create_connections(points)
     x = unique_connection_count(connections)
-    assert x == 3, f'got {x}'
+    assert x == 3, f"got {x}"
 
 
 def part01() -> int:
-    path = Path(__file__).parent / '..' / 'data' / 'day_25.txt'
+    path = Path(__file__).parent / ".." / "data" / "day_25.txt"
     points = parse(path)
     connections = create_connections(points)
     return unique_connection_count(connections)
@@ -72,16 +72,28 @@ def unique_connection_count(connections):
 
     count = 0
     for k, v in connections.items():
-        temps = {k, } | v
+        temps = {
+            k,
+        } | v
         for k2, v2 in connections.items():
-            temps2 = {k2, } | v2
+            temps2 = {
+                k2,
+            } | v2
             for t in temps:
                 if t in temps2:
                     connections[k2] |= temps
                     connections[k] |= temps2
 
     for k, v in connections.items():
-        if any(test in seen for test in ({k, } | v)):
+        if any(
+            test in seen
+            for test in (
+                {
+                    k,
+                }
+                | v
+            )
+        ):
             continue
         seen.add(k)
         seen |= v
@@ -91,7 +103,7 @@ def unique_connection_count(connections):
 
 
 def create_connections(points: List[Point]) -> Dict[Point, Set[Point]]:
-    connections = dict()
+    connections: Dict[Point, Set[Point]] = dict()
     for p1 in points:
         connections[p1] = set()
         for p2 in points:
@@ -101,8 +113,10 @@ def create_connections(points: List[Point]) -> Dict[Point, Set[Point]]:
 
     return connections
 
+
 def run() -> None:
     assert part01() == 394
+
 
 if __name__ == "__main__":
     run()

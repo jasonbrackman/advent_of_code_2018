@@ -130,6 +130,7 @@ def parse(path: Path) -> Tuple[List[OpTest], List[Instruction]]:
 
     return items, codes
 
+
 ops = {
     0: addr,
     1: addi,
