@@ -1,5 +1,6 @@
-# regex rule
-from typing import List, Tuple, Dict, Iterable
+
+from typing import Tuple, Dict, Iterable
+from collections import deque
 
 Grid = Dict[Tuple[int, int], str]
 Vec2 = Tuple[int, int]
@@ -47,17 +48,6 @@ def create_grid(chars: str) -> Grid:
     return grid
 
 
-def pprint(grid: Grid) -> None:
-    rx = [g[0] for g in grid.keys()]
-    ry = [g[1] for g in grid.keys()]
-
-    for x in range(min(rx) - 1, max(rx) + 2):
-        for y in range(min(ry) - 1, max(ry) + 2):
-            icon = "#" if (y, x) not in grid else grid[(y, x)]
-            print(icon, end="")
-        print()
-
-
 def node_neighbours(grid: Grid, node: Vec2) -> Iterable[Vec2]:
     for k, v in dirs.items():
         new = update_pos(node, v)
@@ -70,9 +60,9 @@ def dfs(grid: Grid, goal: Vec2) -> int:
     visited = {
         start,
     }
-    q = [(start, 0)]
+    q = deque([(start, 0)])
     while q:
-        node, door_count = q.pop(0)
+        node, door_count = q.popleft()
         if node == goal:
             return door_count
 
@@ -92,17 +82,16 @@ def parse() -> str:
 def run() -> None:
     chars = parse()
     grid = create_grid(chars)
-    pprint(grid)
     above_999 = 0
     result_door = 0.0
     for pos, icon in grid.items():
         if icon == ".":
-            result = dfs(grid, pos) / 2
-            above_999 += result > 999
+            result = dfs(grid, pos)
+            above_999 += result > 1999  # twice the amount
             if result > result_door:
                 result_door = result
 
-    assert result_door == 3675.0
+    assert result_door / 2 == 3675.0
     assert above_999 == 7953
 
 
