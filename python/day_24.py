@@ -64,7 +64,7 @@ class Unit:
         return 1
 
 
-def parse(path: Path) -> List[Unit]:
+def parse(path: Path, immune_boost: int = 0) -> List[Unit]:
     lines = helpers.lines(path)
     groups: List[Unit] = []
     current = -1
@@ -76,8 +76,6 @@ def parse(path: Path) -> List[Unit]:
         if not items:
             current += 1
         if items:
-            # print(line)
-            # print(items[0])
             count, hit_points, more, attack, attack_type, initiative = items[0]
             types: Dict[str, List[str]] = {
                 "weak": [],
@@ -97,7 +95,9 @@ def parse(path: Path) -> List[Unit]:
                 count=int(count),
                 group=current,
                 uuid=index,
-                attack_damage=int(attack),
+                attack_damage=int(attack) + immune_boost
+                if current == 0
+                else int(attack),
                 attack_type=attack_type,
                 initiative=int(initiative),
                 hit_points=int(hit_points),
@@ -110,7 +110,7 @@ def parse(path: Path) -> List[Unit]:
     return groups
 
 
-def target_selection(armies: List[Unit]) -> Dict[Uuid, Uuid]:
+def target_selection(armies: List[Unit]) -> Dict[Uuid, Unit]:
     """
     During the target selection phase, each group attempts to choose one target.
 
@@ -133,7 +133,7 @@ def target_selection(armies: List[Unit]) -> Dict[Uuid, Uuid]:
     At the end of the target selection phase, each group has selected zero or one
     groups to attack, and each group is being attacked by zero or one groups.
     """
-    results: Dict[Uuid, Uuid] = dict()
+    results: Dict[Uuid, Unit] = dict()
 
     visited: Set[int] = set()
 
@@ -165,13 +165,14 @@ def target_selection(armies: List[Unit]) -> Dict[Uuid, Uuid]:
                 weak = a.attack_type in b.weaknesses
 
                 if immune is True:
-                    most_damage[dmg_immune].append(b)
+                    # skip, ensure it is left untracked
+                    continue
                 elif weak is True:
                     most_damage[dmg_weak].append(b)
                 else:
                     most_damage[dmg_normal].append(b)
 
-        # pull out the best target and note its UUID so it doesn't get picked again.
+        # pull out the best target and note its UUID in visited
         keep_going = True
         for dmg in (dmg_weak, dmg_normal, dmg_immune):
             if keep_going:
@@ -180,14 +181,14 @@ def target_selection(armies: List[Unit]) -> Dict[Uuid, Uuid]:
                     #     f'{a.uuid}-{"Infection" if a.group == 1 else "Immune"} attacks {"Infection" if d.group == 1 else "Immune"} with {a.attack_type} to generate {dmg} damage against {d.count}.'
                     # )
                     keep_going = False
-                    results[a.uuid] = d.uuid
+                    results[a.uuid] = d
                     visited.add(d.uuid)
                     break
 
     return results
 
 
-def attacking(armies: List[Unit], attacks: Dict[Uuid, Uuid]) -> None:
+def attacking(armies: List[Unit], attacks: Dict[Uuid, Unit]) -> None:
     """
     During the attacking phase, each group deals damage to the target it selected,
     if any. Groups attack in decreasing order of initiative, regardless of whether
@@ -198,11 +199,10 @@ def attacking(armies: List[Unit], attacks: Dict[Uuid, Uuid]) -> None:
     """
 
     army = list(reversed(sorted(armies, key=lambda x: x.initiative)))
-    lut = {a.uuid: a for a in army}
 
     for a in army:
         if a.uuid in attacks:
-            b = lut[attacks[a.uuid]]
+            b = attacks[a.uuid]
             multiplier = a.multiplier(b)
             b.receive_damage(a.effective_power() * multiplier)
             # print("\tAfter:", b.count)
@@ -221,11 +221,37 @@ def part01() -> None:
         attacking(groups, attacks)
         groups = [g for g in groups if g.count > 0]
     t = sum(g.count for g in groups)
+    # print(groups[0].group, "won.")
     assert t == 14000
+
+
+def part02() -> None:
+    # "Infection" == 1
+    # "Immune" == 0 <-- we want this one to win
+    for x in range(0, 5000):
+        groups = parse(Path(r"../data/day_24.txt"), immune_boost=x)
+
+        is_changed = True
+        h1 = None
+        while is_changed and _is_two_group(groups):
+            attacks = target_selection(groups)
+            attacking(groups, attacks)
+            groups = [g for g in groups if g.count > 0]
+            h2 = sum(g.count for g in groups)
+            is_changed = h1 != h2
+            h1 = h2
+
+        if is_changed:
+            t = sum(g.count for g in groups)
+            if groups[0].group == 0:
+                assert t == 6149
+                # print(f'Round [{x}] - ', groups[0].group, "won with a total of", t)
+                break
 
 
 def run() -> None:
     part01()
+    part02()
 
 
 if __name__ == "__main__":
